@@ -1,0 +1,3293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<title>محافظة الأنبار — مديرية بلدية الكرمة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --ink:#03101e; --deep:#071828; --royal:#0b2d55; --mid:#164d8f;
+  --gold:#c8a84b; --shine:#edc95a; --pale:#fceea0;
+  --white:#fff; --muted:rgba(255,255,255,.5);
+  --border:rgba(200,168,75,.2); --card:rgba(255,255,255,.033);
+  --green:#3dab6a; --orange:#f59e0b; --red:#e05252; --blue:#3b82f6;
+  --purple:#9333ea;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--ink);color:var(--white);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--deep);}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
+
+/* ══════════ LOGIN ══════════ */
+#loginScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:radial-gradient(ellipse 110% 90% at 55% 5%,#0b2d55 0%,#03101e 65%);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+}
+#loginScreen::before{
+  content:'';position:absolute;inset:0;opacity:.035;
+  background-image:repeating-linear-gradient(45deg,var(--gold) 0,var(--gold) 1px,transparent 0,transparent 50%);
+  background-size:20px 20px;
+}
+.lcard{
+  background:rgba(255,255,255,.042);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(200,168,75,.25);
+  border-radius:24px;padding:50px 44px;
+  width:430px;max-width:96vw;
+  text-align:center;position:relative;
+  box-shadow:0 40px 100px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.seal{
+  width:90px;height:90px;
+  background:linear-gradient(145deg,var(--gold),var(--shine));
+  border-radius:50%;margin:0 auto 18px;
+  display:flex;align-items:center;justify-content:center;font-size:42px;
+  box-shadow:0 0 50px rgba(200,168,75,.4);
+  animation:sealPulse 3s ease-in-out infinite;
+}
+@keyframes sealPulse{0%,100%{box-shadow:0 0 30px rgba(200,168,75,.3);}50%{box-shadow:0 0 70px rgba(200,168,75,.65);}}
+.lcard h2{font-family:'Tajawal',sans-serif;font-size:20px;font-weight:900;color:var(--shine);margin-bottom:3px;}
+.lcard .lsub{font-size:12px;color:var(--muted);margin-bottom:30px;line-height:1.6;}
+
+.lock-banner{
+  background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.3);
+  border-radius:10px;padding:12px;margin-bottom:18px;
+  font-size:13px;color:#ff8080;display:none;
+}
+.attempts-warn{
+  font-size:11px;color:var(--orange);margin-top:8px;display:none;
+}
+
+.lin-wrap{position:relative;margin-bottom:14px;}
+.lin{
+  width:100%;padding:13px 18px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(200,168,75,.18);
+  border-radius:11px;color:white;
+  font-family:'Cairo',sans-serif;font-size:14px;
+  direction:rtl;outline:none;transition:.3s;
+}
+.lin:focus{border-color:var(--gold);background:rgba(200,168,75,.08);box-shadow:0 0 0 3px rgba(200,168,75,.12);}
+.lin.err{border-color:var(--red)!important;}
+.eye-btn{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;
+  transition:.2s;padding:4px;
+}
+.eye-btn:hover{color:var(--shine);}
+
+.lbtn{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--gold),var(--shine));
+  border:none;border-radius:11px;color:var(--ink);
+  font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;
+  cursor:pointer;transition:.3s;margin-top:4px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.lbtn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 30px rgba(200,168,75,.4);}
+.lbtn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;}
+
+.lerr{
+  color:#ff6b6b;font-size:13px;margin-top:12px;
+  display:none;padding:10px;
+  background:rgba(255,107,107,.1);border-radius:8px;
+}
+
+.session-info{
+  margin-top:18px;font-size:11px;color:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+
+/* ══════════ MAIN APP ══════════ */
+#app{display:none;}
+
+/* TOPBAR */
+.topbar{
+  height:64px;
+  background:linear-gradient(135deg,var(--deep),var(--royal));
+  border-bottom:2px solid var(--gold);
+  padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+}
+.tb-brand{display:flex;align-items:center;gap:12px;}
+.tb-seal{
+  width:42px;height:42px;
+  background:linear-gradient(135deg,var(--gold),var(--shine));
+  border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.tb-brand h1{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;color:var(--shine);}
+.tb-brand p{font-size:10px;color:var(--muted);}
+.tb-right{display:flex;align-items:center;gap:10px;}
+
+.session-timer{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);
+  border-radius:20px;padding:5px 13px;font-size:12px;color:var(--orange);font-weight:700;
+}
+.ubadge{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.055);border:1px solid var(--border);
+  border-radius:22px;padding:5px 13px;font-size:12px;font-weight:600;
+}
+.uav{
+  width:28px;height:28px;
+  background:linear-gradient(135deg,var(--gold),var(--shine));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--ink);font-weight:900;
+}
+.role-tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;}
+.out-btn{
+  background:rgba(224,82,82,.15);border:1px solid rgba(224,82,82,.28);
+  color:#ff8080;padding:6px 15px;border-radius:18px;
+  cursor:pointer;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;transition:.3s;
+}
+.out-btn:hover{background:rgba(224,82,82,.3);}
+
+/* LAYOUT */
+.layout{display:flex;min-height:calc(100vh - 64px);}
+
+/* SIDEBAR */
+.sidebar{
+  width:225px;flex-shrink:0;
+  background:rgba(255,255,255,.022);
+  border-left:1px solid rgba(255,255,255,.05);
+  padding:18px 10px;
+  display:flex;flex-direction:column;
+}
+.sb-sec{
+  font-size:9px;color:var(--muted);font-weight:700;
+  letter-spacing:2px;padding:0 10px;margin:16px 0 7px;
+}
+.sb-sec:first-child{margin-top:0;}
+.snav{
+  display:flex;align-items:center;gap:9px;
+  width:100%;padding:9px 11px;background:transparent;border:none;
+  color:rgba(255,255,255,.6);font-family:'Cairo',sans-serif;
+  font-size:12px;font-weight:600;border-radius:9px;cursor:pointer;
+  transition:.22s;text-align:right;margin-bottom:2px;
+}
+.snav:hover{background:rgba(200,168,75,.08);color:var(--shine);}
+.snav.act{background:rgba(200,168,75,.11);color:var(--shine);border-right:3px solid var(--gold);}
+.snav .badge{
+  margin-right:auto;padding:1px 8px;border-radius:20px;
+  font-size:10px;font-weight:700;
+}
+.badge-red{background:rgba(224,82,82,.2);color:var(--red);}
+.badge-gold{background:rgba(200,168,75,.2);color:var(--shine);}
+
+/* MAIN */
+.main{flex:1;padding:26px;overflow-y:auto;}
+
+/* SECTIONS */
+.sec{display:none;}
+.sec.on{display:block;animation:secIn .35s ease;}
+@keyframes secIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:22px;}
+.sc{
+  background:var(--card);border:1px solid rgba(255,255,255,.07);
+  border-radius:15px;padding:18px;transition:.3s;position:relative;overflow:hidden;
+}
+.sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--ac,var(--gold));}
+.sc:hover{transform:translateY(-2px);border-color:var(--border);}
+.sc-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px;}
+.sc-n{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;color:var(--shine);}
+.sc-l{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+.chart-box{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:22px;}
+.chart-box h3{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;color:var(--shine);margin-bottom:16px;}
+.chart-wrap{position:relative;height:200px;}
+
+/* TABLE */
+.tbox{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;}
+.thead{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.055);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.thead h3{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;color:var(--shine);}
+.tcontrols{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.tin{
+  padding:7px 12px;background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);border-radius:8px;
+  color:white;font-family:'Cairo',sans-serif;font-size:12px;
+  direction:rtl;outline:none;transition:.25s;
+}
+.tin:focus{border-color:var(--gold);}
+.tin.wide{width:190px;}
+
+/* Select always visible */
+select.tin{
+  appearance:none;-webkit-appearance:none;
+  background:rgba(255,255,255,.08) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8a84b'/%3E%3C/svg%3E") no-repeat left 10px center;
+  padding-left:28px;padding-right:12px;cursor:pointer;
+  border:1px solid rgba(200,168,75,.3);
+  color:rgba(255,255,255,.9);
+}
+select.tin:hover{border-color:rgba(200,168,75,.6);background-color:rgba(255,255,255,.11);}
+select.tin option{background:#0c1f3a;color:white;}
+select.tin.active-filter{
+  border-color:var(--gold);
+  background-color:rgba(200,168,75,.12);
+  color:var(--shine);
+}
+
+/* Search with clear button */
+.search-wrap{position:relative;display:inline-flex;align-items:center;}
+.search-wrap .tin{padding-left:28px;}
+.search-clear{
+  position:absolute;left:8px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;border-radius:50%;
+  background:rgba(255,255,255,.2);border:none;
+  color:rgba(255,255,255,.7);font-size:10px;cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  line-height:1;transition:.2s;padding:0;
+}
+.search-clear:hover{background:rgba(224,82,82,.6);color:white;}
+.search-clear.visible{display:flex;}
+
+.tbtn{
+  padding:7px 14px;border-radius:8px;
+  font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;
+  cursor:pointer;border:none;transition:.25s;
+}
+.tbtn-g{background:rgba(61,171,106,.15);color:#6ee7b7;border:1px solid rgba(61,171,106,.28);}
+.tbtn-g:hover{background:rgba(61,171,106,.3);}
+.tbtn-b{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.28);}
+.tbtn-b:hover{background:rgba(59,130,246,.3);}
+
+table{width:100%;border-collapse:collapse;}
+th{background:rgba(200,168,75,.07);padding:11px 14px;text-align:right;
+  font-size:11px;font-weight:700;color:var(--shine);border-bottom:1px solid rgba(200,168,75,.12);}
+td{padding:11px 14px;text-align:right;font-size:12px;color:rgba(255,255,255,.73);
+  border-bottom:1px solid rgba(255,255,255,.04);}
+tr:hover td{background:rgba(200,168,75,.04);}
+.bp{background:rgba(245,158,11,.14);color:var(--orange);border:1px solid rgba(245,158,11,.28);}
+.ba{background:rgba(61,171,106,.14);color:var(--green);border:1px solid rgba(61,171,106,.28);}
+.br{background:rgba(224,82,82,.14);color:var(--red);border:1px solid rgba(224,82,82,.28);}
+.barch{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid rgba(255,255,255,.1);}
+.badge-inline{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.arow{display:flex;gap:4px;justify-content:flex-end;}
+.ab{padding:5px 10px;border-radius:7px;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:.2s;}
+.ab-ok{background:rgba(61,171,106,.18);color:var(--green);}
+.ab-ok:hover{background:rgba(61,171,106,.38);}
+.ab-no{background:rgba(224,82,82,.18);color:var(--red);}
+.ab-no:hover{background:rgba(224,82,82,.38);}
+.ab-v{background:rgba(200,168,75,.14);color:var(--shine);}
+.ab-v:hover{background:rgba(200,168,75,.3);}
+.ab-p{background:rgba(59,130,246,.14);color:#93c5fd;}
+.ab-p:hover{background:rgba(59,130,246,.3);}
+.ab-a{background:rgba(255,255,255,.07);color:var(--muted);}
+.ab-a:hover{background:rgba(255,255,255,.14);}
+.ab-e{background:rgba(147,51,234,.15);color:#c084fc;}
+.ab-e:hover{background:rgba(147,51,234,.3);}
+.ab-clone{background:rgba(20,184,166,.15);color:#5eead4;}
+.ab-clone:hover{background:rgba(20,184,166,.3);}
+.mb-clone{background:linear-gradient(135deg,#134e4a,#0d9488);color:white;}
+
+/* ══ CLONE MODAL ══ */
+.clone-section{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;padding:16px;margin-bottom:14px;
+}
+.clone-section-title{
+  font-size:11px;font-weight:800;letter-spacing:.5px;
+  color:rgba(255,255,255,.4);text-transform:uppercase;
+  margin-bottom:12px;
+}
+.clone-field{margin-bottom:12px;}
+.clone-field label{
+  display:block;font-size:11px;font-weight:700;
+  color:rgba(255,255,255,.6);margin-bottom:5px;
+}
+.clone-field input,.clone-field select,.clone-field textarea{
+  width:100%;padding:10px 13px;border-radius:9px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  color:white;font-family:'Cairo',sans-serif;font-size:13px;
+  outline:none;transition:.2s;box-sizing:border-box;
+}
+.clone-field input:focus,.clone-field select,.clone-field textarea:focus{
+  border-color:var(--gold);
+}
+.clone-field textarea{resize:vertical;min-height:80px;}
+.clone-field select option{background:#0c1f3a;color:white;}
+.clone-diff-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;
+  background:rgba(20,184,166,.12);color:#5eead4;
+  border:1px solid rgba(20,184,166,.25);margin-right:6px;
+}
+.clone-ref-preview{
+  padding:10px 14px;border-radius:10px;
+  background:rgba(200,168,75,.08);border:1px solid rgba(200,168,75,.2);
+  font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;
+  color:var(--shine);text-align:center;letter-spacing:1px;
+}
+.ab-d{background:rgba(224,82,82,.12);color:var(--red);}
+.ab-d:hover{background:rgba(224,82,82,.3);}
+
+.empty{text-align:center;padding:50px;color:var(--muted);}
+.empty .ei{font-size:44px;margin-bottom:12px;}
+
+.pg-row{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-top:1px solid rgba(255,255,255,.05);font-size:12px;color:var(--muted);}
+.pg-btns{display:flex;gap:5px;}
+.pgb{padding:5px 12px;background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);border-radius:7px;
+  color:var(--muted);cursor:pointer;font-size:11px;transition:.2s;}
+.pgb:hover,.pgb.act{background:rgba(200,168,75,.14);border-color:var(--border);color:var(--shine);}
+
+/* ══════════ SETTINGS / SUPERVISOR PANEL ══════════ */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.set-card{
+  background:var(--card);border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;padding:24px;
+}
+.set-card.full{grid-column:1/-1;}
+.set-card h3{
+  font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;color:var(--shine);
+  margin-bottom:20px;padding-bottom:12px;
+  border-bottom:1px solid rgba(200,168,75,.14);
+  display:flex;align-items:center;gap:8px;
+}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.fg label{font-size:12px;font-weight:700;color:rgba(255,255,255,.62);}
+.fg input,.fg select,.fg textarea{
+  padding:11px 14px;background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);border-radius:10px;
+  color:white;font-family:'Cairo',sans-serif;font-size:13px;
+  direction:rtl;outline:none;transition:.3s;
+}
+.fg select option{background:var(--deep);}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:var(--gold);background:rgba(200,168,75,.07);
+  box-shadow:0 0 0 3px rgba(200,168,75,.1);
+}
+.fg textarea{resize:vertical;min-height:80px;}
+.fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-save{
+  padding:11px 28px;background:linear-gradient(135deg,var(--gold),var(--shine));
+  border:none;border-radius:10px;color:var(--ink);
+  font-family:'Tajawal',sans-serif;font-size:14px;font-weight:900;
+  cursor:pointer;transition:.3s;
+}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 7px 22px rgba(200,168,75,.38);}
+.btn-danger{
+  padding:11px 22px;background:rgba(224,82,82,.15);
+  border:1px solid rgba(224,82,82,.28);border-radius:10px;
+  color:var(--red);font-family:'Tajawal',sans-serif;
+  font-size:13px;font-weight:700;cursor:pointer;transition:.3s;
+}
+.btn-danger:hover{background:rgba(224,82,82,.3);}
+
+/* USER CARDS */
+.users-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+.uc{
+  background:rgba(255,255,255,.038);border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;padding:20px;
+}
+.uc-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.uc-av{
+  width:48px;height:48px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+}
+.uc-info h4{font-size:14px;font-weight:700;color:var(--shine);}
+.uc-info p{font-size:11px;color:var(--muted);}
+.uc-perms{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.perm{padding:3px 9px;border-radius:15px;font-size:10px;font-weight:700;
+  background:rgba(200,168,75,.1);color:var(--shine);border:1px solid rgba(200,168,75,.18);}
+.uc-actions{display:flex;gap:6px;}
+
+/* DEPT LIST */
+.dept-list{display:flex;flex-direction:column;gap:10px;}
+.dept-row{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;
+}
+.dept-row .di{font-size:24px;flex-shrink:0;}
+.dept-row .dn{flex:1;}
+.dept-row .dn h4{font-size:14px;font-weight:700;color:var(--shine);}
+.dept-row .dn p{font-size:11px;color:var(--muted);}
+.toggle-sw{
+  position:relative;width:42px;height:22px;flex-shrink:0;
+}
+.toggle-sw input{opacity:0;width:0;height:0;}
+.toggle-sl{
+  position:absolute;cursor:pointer;inset:0;
+  background:rgba(255,255,255,.15);border-radius:22px;transition:.3s;
+}
+.toggle-sl::before{
+  content:'';position:absolute;height:16px;width:16px;
+  left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;
+}
+input:checked + .toggle-sl{background:var(--green);}
+input:checked + .toggle-sl::before{transform:translateX(20px);}
+
+/* LOG TABLE */
+.log-entry{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.log-dot{
+  width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;
+}
+.log-text{flex:1;font-size:12px;color:rgba(255,255,255,.7);}
+.log-time{font-size:11px;color:var(--muted);flex-shrink:0;}
+
+/* PASSWORD STRENGTH */
+.pw-strength{height:4px;border-radius:2px;margin-top:6px;transition:.4s;background:rgba(255,255,255,.1);}
+.pw-label{font-size:10px;color:var(--muted);margin-top:4px;}
+
+/* ══ MODAL ══ */
+.ov{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.75);
+  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+.ov.on{display:flex;animation:fIn .3s ease;}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+.mbox{
+  background:linear-gradient(145deg,#0c1f3a,#162f5a);
+  border:1px solid var(--border);border-radius:22px;padding:36px;
+  width:520px;max-width:95vw;max-height:92vh;overflow-y:auto;
+  box-shadow:0 40px 100px rgba(0,0,0,.6);
+  animation:mPop .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes mPop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.mbox h3{font-family:'Tajawal',sans-serif;font-size:19px;font-weight:900;
+  color:var(--shine);margin-bottom:20px;padding-bottom:13px;
+  border-bottom:1px solid rgba(200,168,75,.14);}
+.m2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px;}
+.mf label{font-size:11px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;}
+.mv{padding:10px 13px;background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);border-radius:9px;font-size:12px;}
+.mf textarea{width:100%;padding:10px 13px;background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);border-radius:9px;
+  color:white;font-family:'Cairo',sans-serif;font-size:12px;
+  direction:rtl;outline:none;resize:vertical;min-height:75px;transition:.25s;}
+.mf textarea:focus{border-color:var(--gold);}
+.mact{display:flex;gap:9px;margin-top:20px;justify-content:flex-end;flex-wrap:wrap;}
+.mbtn{padding:10px 22px;border-radius:9px;font-family:'Tajawal',sans-serif;
+  font-size:13px;font-weight:800;cursor:pointer;border:none;transition:.25s;}
+.mbtn:hover{transform:translateY(-1px);}
+.mb-ok{background:linear-gradient(135deg,#1a5c36,var(--green));color:white;}
+.mb-no{background:linear-gradient(135deg,#6b1515,var(--red));color:white;}
+.mb-cl{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid rgba(255,255,255,.09);}
+.mb-pdf{background:linear-gradient(135deg,#1e3a8a,var(--blue));color:white;}
+
+/* ══ SMS STATUS ══ */
+.sms-status{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:11px;
+  font-size:12px;font-weight:700;margin-top:12px;
+}
+.sms-ok {background:rgba(61,171,106,.1);border:1px solid rgba(61,171,106,.28);color:var(--green);}
+.sms-err{background:rgba(224,82,82,.1);border:1px solid rgba(224,82,82,.28);color:var(--red);}
+.sms-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);color:var(--orange);}
+.sms-pending{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.28);color:var(--blue);}
+
+.sms-log{
+  max-height:220px;overflow-y:auto;
+  border:1px solid rgba(255,255,255,.06);border-radius:10px;
+  margin-top:10px;
+}
+.sms-log-row{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:11px;
+}
+.sms-log-row:last-child{border-bottom:none;}
+.sms-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+
+.provider-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.prov-tab{
+  flex:1;padding:10px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.04);
+  cursor:pointer;text-align:center;transition:.25s;
+}
+.prov-tab.act{
+  border-color:var(--gold);
+  background:rgba(200,168,75,.1);
+}
+.prov-tab .pn{font-size:13px;font-weight:800;color:var(--shine);}
+.prov-tab .ps{font-size:10px;color:var(--muted);}
+
+.test-btn{
+  padding:10px 20px;
+  background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.28);
+  color:#93c5fd;border-radius:10px;
+  font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:.25s;
+}
+.test-btn:hover{background:rgba(59,130,246,.3);}
+.test-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ══ IMAGE VIEWER IN ADMIN ══ */
+.admin-img-thumb{
+  width:88px;height:88px;border-radius:10px;
+  object-fit:cover;cursor:zoom-in;
+  border:1px solid rgba(200,168,75,.25);
+  transition:.25s;
+}
+.admin-img-thumb:hover{transform:scale(1.06);border-color:var(--gold);}
+.admin-img-wrap{position:relative;}
+.img-num{
+  position:absolute;bottom:4px;right:4px;
+  background:rgba(0,0,0,.6);color:white;
+  font-size:9px;font-weight:700;
+  padding:2px 6px;border-radius:8px;
+}
+.no-img-badge{
+  padding:8px 14px;border-radius:10px;
+  background:rgba(255,255,255,.04);
+  border:1px dashed rgba(255,255,255,.1);
+  color:var(--muted);font-size:12px;
+}
+
+/* PRINT */
+@media print{
+  body *{visibility:hidden!important;}
+  #printZone,#printZone *{visibility:visible!important;}
+  #printZone{
+    position:fixed;inset:0;background:white;color:black;
+    font-family:'Cairo',Arial,sans-serif;direction:rtl;
+    z-index:999999;overflow:visible;
+  }
+  .no-print{display:none!important;}
+}
+#printZone{display:none;}
+
+/* ══ PRINT MODAL ══ */
+.print-modal-box{
+  max-width:700px;max-height:88vh;overflow-y:auto;
+}
+.print-tpl-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;
+}
+.print-tpl{
+  padding:14px 10px;border-radius:12px;text-align:center;cursor:pointer;transition:.25s;
+  border:2px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);
+}
+.print-tpl:hover{border-color:rgba(200,168,75,.4);background:rgba(200,168,75,.06);}
+.print-tpl.sel{border-color:var(--gold);background:rgba(200,168,75,.12);}
+.print-tpl .pt-icon{font-size:26px;margin-bottom:6px;}
+.print-tpl .pt-name{font-size:12px;font-weight:800;color:var(--shine);}
+.print-tpl .pt-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+
+.print-opts{
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:14px;margin-bottom:14px;
+}
+.print-opt-row{
+  display:flex;align-items:center;gap:10px;padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;
+}
+.print-opt-row:last-child{border-bottom:none;}
+.print-opt-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);}
+.print-opt-row span{font-size:12px;font-weight:600;color:rgba(255,255,255,.75);}
+
+.print-preview-box{
+  border:1px solid rgba(200,168,75,.2);border-radius:12px;
+  overflow:hidden;margin-bottom:14px;background:white;
+  max-height:260px;overflow-y:auto;
+}
+.print-preview-box iframe{
+  width:100%;height:240px;border:none;background:white;
+}
+
+.mb-print{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:white;}
+.mb-print:hover{filter:brightness(1.15);}
+
+
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:25px;left:50%;
+  transform:translateX(-50%) translateY(90px);
+  padding:12px 26px;border-radius:28px;
+  font-weight:800;font-size:13px;z-index:99999;
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+.toast.on{transform:translateX(-50%) translateY(0);}
+.toast-s{background:linear-gradient(135deg,var(--gold),var(--shine));color:var(--ink);box-shadow:0 8px 24px rgba(200,168,75,.4);}
+.toast-e{background:linear-gradient(135deg,#6b1515,var(--red));color:white;box-shadow:0 8px 24px rgba(224,82,82,.4);}
+.toast-i{background:linear-gradient(135deg,#1e3a8a,var(--blue));color:white;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .charts-row{grid-template-columns:1fr;}
+  .settings-grid{grid-template-columns:1fr;}
+  .fgrid2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="loginScreen">
+  <div class="lcard">
+    <div class="seal">🏛️</div>
+    <h2 id="sysNameLogin">مديرية بلدية الكرمة</h2>
+    <div class="lsub" id="sysSubLogin">محافظة الأنبار — الجمهورية العراقية<br>لوحة الإدارة المحمية</div>
+
+    <div class="lock-banner" id="lockBanner">
+      🔒 تم تعليق الحساب مؤقتاً بسبب محاولات دخول متكررة.<br>
+      يرجى الانتظار <strong id="lockTimer">30</strong> ثانية.
+    </div>
+
+    <div class="lin-wrap">
+      <input class="lin" id="loginU" placeholder="اسم المستخدم" autocomplete="username" />
+    </div>
+    <div class="lin-wrap">
+      <input class="lin" id="loginP" type="password" placeholder="كلمة المرور"
+        autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')doLogin()" />
+      <button class="eye-btn" onclick="toggleEye()" id="eyeBtn" type="button">👁</button>
+    </div>
+
+    <div class="attempts-warn" id="attemptsWarn"></div>
+    <button class="lbtn" id="loginBtn" onclick="doLogin()">🔐 دخول النظام</button>
+    <div class="lerr" id="loginErr">❌ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+
+    <div class="session-info">
+      🛡️ نظام محمي — جميع محاولات الدخول مسجّلة
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-seal">🏛️</div>
+      <div>
+        <h1 id="topbarName">مديرية بلدية الكرمة</h1>
+        <p id="topbarSub">محافظة الأنبار — لوحة الإدارة</p>
+      </div>
+    </div>
+    <div class="tb-right">
+      <div class="session-timer" id="sessionTimer">⏱ <span id="sessionCountdown">30:00</span></div>
+      <div class="ubadge">
+        <span id="uNameTop">—</span>
+        <div class="uav" id="uInitTop">م</div>
+      </div>
+      <div class="role-tag" id="uRoleTag" style="background:rgba(200,168,75,.15);color:var(--shine);">مدير</div>
+      <button class="out-btn" onclick="doLogout()">خروج 🚪</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-sec">الرئيسية</div>
+      <button class="snav act" onclick="goSec('overview',this)">📊 نظرة عامة</button>
+      <button class="snav" onclick="goSec('requests',this)">📋 الطلبات <span class="badge badge-red" id="sb-pend">0</span></button>
+      <button class="snav" onclick="goSec('archive',this)">🗂️ الأرشيف</button>
+      <button class="snav" onclick="goSec('reports',this)">📈 التقارير</button>
+      <button class="snav" onclick="goSec('logs',this)">📜 سجل الأحداث</button>
+
+      <div class="sb-sec">الأقسام</div>
+      <button class="snav" onclick="filterDept('env',this)">🌿 البيئة <span class="badge badge-gold" id="sb-env">0</span></button>
+      <button class="snav" onclick="filterDept('urban',this)">🏗️ تنظيم المدن <span class="badge badge-gold" id="sb-urban">0</span></button>
+      <button class="snav" onclick="filterDept('parks',this)">🌳 الحدائق <span class="badge badge-gold" id="sb-parks">0</span></button>
+      <button class="snav" onclick="filterDept('permit',this)">📋 إجازة البناء <span class="badge badge-gold" id="sb-permit">0</span></button>
+      <button class="snav" onclick="filterDept('roads',this)">🛣️ الطرق <span class="badge badge-gold" id="sb-roads">0</span></button>
+      <button class="snav" onclick="filterDept('health',this)">🏥 الصحة البيئية <span class="badge badge-gold" id="sb-health">0</span></button>
+
+      <div class="sb-sec" id="adminNav" style="display:none">الإدارة</div>
+      <button class="snav" id="settingsNav" style="display:none" onclick="goSec('settings',this)">⚙️ إعدادات النظام</button>
+      <button class="snav" id="usersNav" style="display:none" onclick="goSec('users',this)">👥 إدارة المستخدمين</button>
+
+      <div class="sb-sec">أدوات</div>
+      <button class="snav" onclick="exportCSV()">📥 تصدير CSV</button>
+      <button class="snav" onclick="window.open('index.html','_blank')">🌐 بوابة المواطن</button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- OVERVIEW -->
+      <div id="sec-overview" class="sec on">
+        <div class="stats-row">
+          <div class="sc" style="--ac:var(--gold)"><div class="sc-ico" style="background:rgba(200,168,75,.11);">📋</div><div class="sc-n" id="st-total">0</div><div class="sc-l">إجمالي الطلبات</div></div>
+          <div class="sc" style="--ac:var(--orange)"><div class="sc-ico" style="background:rgba(245,158,11,.11);">⏳</div><div class="sc-n" id="st-pend">0</div><div class="sc-l">قيد المراجعة</div></div>
+          <div class="sc" style="--ac:var(--green)"><div class="sc-ico" style="background:rgba(61,171,106,.11);">✅</div><div class="sc-n" id="st-appr">0</div><div class="sc-l">معتمدة</div></div>
+          <div class="sc" style="--ac:var(--red)"><div class="sc-ico" style="background:rgba(224,82,82,.11);">❌</div><div class="sc-n" id="st-rej">0</div><div class="sc-l">مرفوضة</div></div>
+          <div class="sc" style="--ac:var(--blue)"><div class="sc-ico" style="background:rgba(59,130,246,.11);">🗂️</div><div class="sc-n" id="st-arch">0</div><div class="sc-l">مؤرشفة</div></div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-box"><h3>📊 توزيع الطلبات</h3><div class="chart-wrap"><canvas id="cDept"></canvas></div></div>
+          <div class="chart-box"><h3>🎯 حالة الطلبات</h3><div class="chart-wrap"><canvas id="cStatus"></canvas></div></div>
+        </div>
+      </div>
+
+      <!-- REQUESTS -->
+      <div id="sec-requests" class="sec">
+        <div class="tbox">
+          <div class="thead">
+            <h3 id="tblTitle">إدارة الطلبات</h3>
+            <div class="tcontrols">
+              <div class="search-wrap">
+                <input class="tin wide" id="srch" placeholder="🔍 بحث..." oninput="onSrchInput()" />
+                <button class="search-clear" id="srch-clear" onclick="clearSrch()" title="مسح البحث">✕</button>
+              </div>
+              <select class="tin" id="fDept" onchange="onFilterChange()">
+                <option value="">كل الأقسام</option>
+                <option value="env">🌿 البيئة</option><option value="urban">🏗️ تنظيم المدن</option>
+                <option value="parks">🌳 الحدائق</option><option value="permit">📋 إجازة البناء</option>
+                <option value="roads">🛣️ الطرق</option><option value="health">🏥 الصحة البيئية</option>
+              </select>
+              <select class="tin" id="fStatus" onchange="onFilterChange()">
+                <option value="">كل الحالات</option>
+                <option value="pending">⏳ قيد المراجعة</option>
+                <option value="approved">✅ معتمدة</option>
+                <option value="rejected">❌ مرفوضة</option>
+              </select>
+              <button class="tbtn" id="clearFiltersBtn" onclick="clearAllFilters()" style="display:none;background:rgba(224,82,82,.15);color:#fca5a5;border:1px solid rgba(224,82,82,.25);">✕ مسح الفلاتر</button>
+              <button class="tbtn tbtn-g" onclick="exportCSV()">📥 CSV</button>
+              <button class="tbtn tbtn-b" onclick="printTbl()">🖨️ طباعة</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr>
+                <th>#</th><th>رقم الطلب</th><th>القسم</th>
+                <th>مقدم الطلب</th><th>الهاتف</th>
+                <th>التاريخ</th><th>الصور</th><th>الحالة</th><th>الإجراءات</th>
+              </tr></thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+          <div class="pg-row">
+            <div id="pgInfo">0 طلب</div>
+            <div class="pg-btns" id="pgBtns"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARCHIVE -->
+      <div id="sec-archive" class="sec">
+        <div class="tbox">
+          <div class="thead"><h3>🗂️ الأرشيف</h3>
+            <div class="tcontrols">
+              <div class="search-wrap">
+                <input class="tin wide" id="archSrch" placeholder="🔍 بحث في الأرشيف..." oninput="onArchSrchInput()" />
+                <button class="search-clear" id="archSrch-clear" onclick="clearArchSrch()" title="مسح البحث">✕</button>
+              </div>
+              <button class="tbtn tbtn-g" onclick="exportCSV(true)">📥 تصدير</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>#</th><th>رقم الطلب</th><th>القسم</th><th>مقدم الطلب</th><th>التاريخ</th><th>الحالة</th><th>استرجاع</th></tr></thead>
+              <tbody id="archTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div id="sec-reports" class="sec">
+        <div class="charts-row">
+          <div class="chart-box"><h3>📊 الطلبات حسب القسم</h3><div class="chart-wrap"><canvas id="rDept"></canvas></div></div>
+          <div class="chart-box"><h3>📡 نسبة الإنجاز</h3><div class="chart-wrap"><canvas id="rRadar"></canvas></div></div>
+        </div>
+        <div class="tbox" style="margin-top:16px;">
+          <div class="thead"><h3>📋 تقرير تفصيلي</h3>
+            <button class="tbtn tbtn-b" onclick="printReport()">🖨️ طباعة</button>
+          </div>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>القسم</th><th>إجمالي</th><th>قيد المراجعة</th><th>معتمدة</th><th>مرفوضة</th><th>نسبة الإنجاز</th></tr></thead>
+            <tbody id="repTbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- LOGS -->
+      <div id="sec-logs" class="sec">
+        <div class="tbox">
+          <div class="thead"><h3>📜 سجل الأحداث الأمني</h3>
+            <button class="tbtn tbtn-b" onclick="clearLogs()">🗑️ مسح السجل</button>
+          </div>
+          <div id="logsContainer" style="max-height:500px;overflow-y:auto;"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS (supervisor/admin only) -->
+      <div id="sec-settings" class="sec">
+        <div class="settings-grid">
+
+          <!-- System Name -->
+          <div class="set-card">
+            <h3>🏛️ اسم ومعلومات النظام</h3>
+            <div class="fg"><label>اسم المديرية</label><input id="cfg-name" /></div>
+            <div class="fg"><label>المحافظة</label><input id="cfg-gov" /></div>
+            <div class="fg"><label>العنوان الفرعي</label><input id="cfg-sub" /></div>
+            <div class="fg"><label>رقم التواصل</label><input id="cfg-phone" /></div>
+            <button class="btn-save" onclick="saveSysInfo()">💾 حفظ المعلومات</button>
+          </div>
+
+          <!-- Session Settings -->
+          <div class="set-card">
+            <h3>🔐 إعدادات الأمان</h3>
+            <div class="fg"><label>مدة الجلسة (دقيقة)</label>
+              <select id="cfg-session">
+                <option value="15">15 دقيقة</option>
+                <option value="30" selected>30 دقيقة</option>
+                <option value="60">60 دقيقة</option>
+                <option value="120">ساعتان</option>
+              </select>
+            </div>
+            <div class="fg"><label>عدد محاولات الدخول قبل القفل</label>
+              <select id="cfg-attempts">
+                <option value="3">3 محاولات</option>
+                <option value="5" selected>5 محاولات</option>
+                <option value="10">10 محاولات</option>
+              </select>
+            </div>
+            <div class="fg"><label>مدة القفل (ثانية)</label>
+              <select id="cfg-locktime">
+                <option value="30">30 ثانية</option>
+                <option value="60" selected>60 ثانية</option>
+                <option value="300">5 دقائق</option>
+              </select>
+            </div>
+            <button class="btn-save" onclick="saveSecSettings()">💾 حفظ الإعدادات</button>
+          </div>
+
+          <!-- SMS Settings -->
+          <div class="set-card full" id="smsCard">
+            <h3>📲 إعدادات إرسال الرسائل النصية (SMS)</h3>
+
+            <!-- مزود الخدمة -->
+            <div style="margin-bottom:16px;">
+              <div class="fg" style="margin-bottom:10px;"><label>مزود خدمة SMS</label></div>
+              <div class="provider-tabs" id="providerTabs">
+                <div class="prov-tab act" data-prov="twilio" onclick="selectProvider('twilio',this)">
+                  <div class="pn">Twilio</div>
+                  <div class="ps">🌍 دولي — يدعم العراق</div>
+                </div>
+                <div class="prov-tab" data-prov="vonage" onclick="selectProvider('vonage',this)">
+                  <div class="pn">Vonage</div>
+                  <div class="ps">🌐 دولي — سهل التفعيل</div>
+                </div>
+                <div class="prov-tab" data-prov="custom" onclick="selectProvider('custom',this)">
+                  <div class="pn">Custom API</div>
+                  <div class="ps">⚙️ أي مزود آخر</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Twilio Fields -->
+            <div id="fields-twilio">
+              <div class="fgrid2">
+                <div class="fg">
+                  <label>Account SID <span style="color:var(--muted);font-size:10px;">(من Twilio Console)</span></label>
+                  <input id="sms-twilio-sid" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+                </div>
+                <div class="fg">
+                  <label>Auth Token <span style="color:var(--muted);font-size:10px;">(من Twilio Console)</span></label>
+                  <input id="sms-twilio-token" type="password" placeholder="••••••••••••••••••••••••••••••••" />
+                </div>
+              </div>
+              <div class="fg">
+                <label>رقم Twilio (From) <span style="color:var(--muted);font-size:10px;">مثال: +12025551234</span></label>
+                <input id="sms-twilio-from" placeholder="+1XXXXXXXXXX" dir="ltr" style="text-align:left;" />
+              </div>
+            </div>
+
+            <!-- Vonage Fields -->
+            <div id="fields-vonage" style="display:none;">
+              <div class="fgrid2">
+                <div class="fg">
+                  <label>API Key</label>
+                  <input id="sms-vonage-key" placeholder="xxxxxxxx" dir="ltr" style="text-align:left;" />
+                </div>
+                <div class="fg">
+                  <label>API Secret</label>
+                  <input id="sms-vonage-secret" type="password" placeholder="••••••••••••••••" dir="ltr" style="text-align:left;" />
+                </div>
+              </div>
+              <div class="fgrid2">
+                <div class="fg">
+                  <label>اسم المرسل (From)
+                    <span style="color:var(--muted);font-size:10px;margin-right:4px;">— يُطابق Java: "Vonage APIs"</span>
+                  </label>
+                  <input id="sms-vonage-from" placeholder="Vonage APIs" dir="ltr" style="text-align:left;" value="Vonage APIs" />
+                </div>
+                <div class="fg">
+                  <label>رقم المُستلم الافتراضي (للاختبار)
+                    <span style="color:var(--muted);font-size:10px;margin-right:4px;">مثال: 9647833331112</span>
+                  </label>
+                  <input id="sms-vonage-testphone" placeholder="9647833331112" dir="ltr" style="text-align:left;" />
+                </div>
+              </div>
+              <!-- كود Java المرجعي -->
+              <div style="margin-top:6px;background:rgba(0,0,0,.25);border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,.07);">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                  <span style="font-size:11px;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.5px;text-transform:uppercase;">☕ Java SDK Reference</span>
+                  <span style="padding:2px 8px;border-radius:10px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);color:#fbbf24;font-size:10px;font-weight:700;">للمرجعية فقط</span>
+                </div>
+                <pre style="font-family:'Courier New',monospace;font-size:11px;color:#93c5fd;margin:0;white-space:pre-wrap;line-height:1.7;direction:ltr;text-align:left;"><span style="color:#86efac;">TextMessage</span> message = <span style="color:#fbbf24;">new</span> TextMessage(<span style="color:#f9a8d4;">"Vonage APIs"</span>,
+        <span style="color:#f9a8d4;">"9647833331112"</span>,
+        <span style="color:#f9a8d4;">"A text message sent using the Vonage SMS API"</span>);
+
+<span style="color:#86efac;">SmsSubmissionResponse</span> response =
+    client.getSmsClient().submitMessage(message);
+
+<span style="color:#fbbf24;">if</span> (response.getMessages().get(<span style="color:#c4b5fd;">0</span>).getStatus()
+    == <span style="color:#86efac;">MessageStatus</span>.OK) {
+    System.out.println(<span style="color:#f9a8d4;">"Message sent successfully."</span>);
+} <span style="color:#fbbf24;">else</span> {
+    System.out.println(<span style="color:#f9a8d4;">"Message failed with error: "</span>
+        + response.getMessages().get(<span style="color:#c4b5fd;">0</span>).getErrorText());
+}</pre>
+                <div style="margin-top:10px;padding:8px 12px;background:rgba(20,184,166,.07);border-radius:8px;border:1px solid rgba(20,184,166,.15);font-size:11px;color:rgba(255,255,255,.6);line-height:1.7;">
+                  ✅ الكود أعلاه مُترجَم بالكامل للـ JavaScript أدناه ويعمل بنفس المنطق:<br>
+                  &nbsp;&nbsp;• <code style="color:#93c5fd;">MessageStatus.OK</code> = الحالة <code style="color:#93c5fd;">status === "0"</code><br>
+                  &nbsp;&nbsp;• <code style="color:#93c5fd;">getErrorText()</code> = <code style="color:#93c5fd;">messages[0]['error-text']</code><br>
+                  &nbsp;&nbsp;• <code style="color:#93c5fd;">submitMessage()</code> = <code style="color:#93c5fd;">POST https://rest.nexmo.com/sms/json</code>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom API Fields -->
+            <div id="fields-custom" style="display:none;">
+              <div class="fg">
+                <label>رابط API <span style="color:var(--muted);font-size:10px;">يجب أن يدعم POST</span></label>
+                <input id="sms-custom-url" placeholder="https://api.yourprovider.com/send" dir="ltr" style="text-align:left;" />
+              </div>
+              <div class="fgrid2">
+                <div class="fg">
+                  <label>API Key / Token</label>
+                  <input id="sms-custom-key" type="password" placeholder="••••••••••••" />
+                </div>
+                <div class="fg">
+                  <label>حقل الرسالة (body field)</label>
+                  <input id="sms-custom-msgfield" placeholder="message" dir="ltr" style="text-align:left;" />
+                </div>
+              </div>
+              <div class="fg">
+                <label>حقل الهاتف (phone field)</label>
+                <input id="sms-custom-phonefield" placeholder="to" dir="ltr" style="text-align:left;" />
+              </div>
+            </div>
+
+            <!-- نصوص الرسائل -->
+            <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06);">
+              <div style="font-size:12px;font-weight:700;color:var(--shine);margin-bottom:14px;">📝 نصوص الرسائل</div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">
+                المتغيرات المتاحة: <code style="color:var(--shine);">{name}</code> اسم المواطن &nbsp;|&nbsp; <code style="color:var(--shine);">{ref}</code> رقم الطلب &nbsp;|&nbsp; <code style="color:var(--shine);">{dept}</code> القسم &nbsp;|&nbsp; <code style="color:var(--shine);">{org}</code> اسم المديرية
+              </div>
+              <div class="fg">
+                <label>✅ رسالة الاعتماد</label>
+                <textarea id="sms-msg-approved" rows="3">عزيزي {name}، تم اعتماد طلبك رقم {ref} في {dept} - {org}. للاستفسار تواصل معنا.</textarea>
+              </div>
+              <div class="fg">
+                <label>❌ رسالة الرفض</label>
+                <textarea id="sms-msg-rejected" rows="3">عزيزي {name}، نأسف لإبلاغك برفض طلبك رقم {ref} في {dept}. يرجى مراجعة الدائرة للاستفسار.</textarea>
+              </div>
+            </div>
+
+            <!-- إعدادات إضافية -->
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);">
+              <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px;">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                  <input type="checkbox" id="sms-enabled" style="width:16px;height:16px;accent-color:var(--gold);" />
+                  <span>تفعيل إرسال SMS تلقائياً</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                  <input type="checkbox" id="sms-on-approve" checked style="width:16px;height:16px;accent-color:var(--gold);" />
+                  <span>إرسال عند الاعتماد</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                  <input type="checkbox" id="sms-on-reject" style="width:16px;height:16px;accent-color:var(--gold);" />
+                  <span>إرسال عند الرفض</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- الأزرار -->
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px;">
+              <button class="btn-save" onclick="saveSmsSettings()">💾 حفظ إعدادات SMS</button>
+              <button class="test-btn" id="testSmsBtn" onclick="openTestSmsModal()">🧪 إرسال رسالة تجريبية</button>
+            </div>
+
+            <!-- الحالة -->
+            <div id="smsStatusBar"></div>
+
+            <!-- سجل الرسائل -->
+            <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <span style="font-size:12px;font-weight:700;color:var(--shine);">📜 سجل الرسائل المُرسلة</span>
+                <button style="font-size:11px;padding:4px 12px;border-radius:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--muted);cursor:pointer;" onclick="clearSmsLog()">مسح</button>
+              </div>
+              <div class="sms-log" id="smsLog">
+                <div style="text-align:center;padding:18px;color:var(--muted);font-size:12px;">لا توجد رسائل مُرسلة بعد</div>
+              </div>
+            </div>
+
+            <!-- دليل سريع -->
+            <div style="margin-top:16px;padding:14px;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.18);border-radius:12px;">
+              <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:8px;">📖 دليل سريع — كيف تحصل على بيانات Twilio</div>
+              <ol style="font-size:11px;color:rgba(255,255,255,.6);line-height:2;padding-right:18px;">
+                <li>اذهب إلى <strong style="color:#93c5fd;">twilio.com</strong> وأنشئ حساباً مجانياً</li>
+                <li>من لوحة التحكم انسخ <strong>Account SID</strong> و<strong>Auth Token</strong></li>
+                <li>اضغط "Get a free phone number" للحصول على رقم مجاني</li>
+                <li>الحساب المجاني يتيح <strong>~15 رسالة</strong> مجانية للبداية</li>
+                <li>للإرسال للعراق (+964) تأكد من تفعيل العراق في Geographic Permissions</li>
+              </ol>
+            </div>
+          </div>
+
+
+          <div class="set-card full">
+            <h3>📂 إدارة الأقسام (تفعيل/إيقاف)</h3>
+            <div class="dept-list" id="deptManager"></div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="set-card full" style="border-color:rgba(224,82,82,.2);">
+            <h3 style="color:var(--red);">⚠️ منطقة الخطر</h3>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <button class="btn-danger" onclick="confirmClearAll()">🗑️ مسح جميع الطلبات</button>
+              <button class="btn-danger" onclick="resetSysSettings()">↩ إعادة ضبط الإعدادات</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- USERS (admin only) -->
+      <div id="sec-users" class="sec">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+          <h2 style="font-family:'Tajawal',sans-serif;font-size:20px;color:var(--shine);">👥 إدارة المستخدمين</h2>
+          <button class="btn-save" onclick="openAddUser()">➕ إضافة مستخدم</button>
+        </div>
+        <div class="users-list" id="usersList"></div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- DETAIL MODAL -->
+<div class="ov" id="detOv">
+  <div class="mbox">
+    <h3>📄 تفاصيل الطلب</h3>
+    <div class="m2">
+      <div class="mf"><label>رقم الطلب</label><div class="mv" id="d-ref">—</div></div>
+      <div class="mf"><label>القسم</label><div class="mv" id="d-dept">—</div></div>
+    </div>
+    <div class="m2">
+      <div class="mf"><label>مقدم الطلب</label><div class="mv" id="d-name">—</div></div>
+      <div class="mf"><label>الهاتف</label><div class="mv" id="d-phone">—</div></div>
+    </div>
+    <div class="m2">
+      <div class="mf"><label>البريد</label><div class="mv" id="d-email">—</div></div>
+      <div class="mf"><label>نوع الطلب</label><div class="mv" id="d-type">—</div></div>
+    </div>
+    <div class="m2">
+      <div class="mf"><label>التاريخ</label><div class="mv" id="d-date">—</div></div>
+      <div class="mf"><label>الحالة</label><div class="mv" id="d-status">—</div></div>
+    </div>
+    <div style="margin-bottom:13px;">
+      <div class="mf"><label>تفاصيل الطلب</label><div class="mv" id="d-details" style="min-height:55px;white-space:pre-wrap;">—</div></div>
+    </div>
+    <!-- صور مرفقة -->
+    <div id="d-images-section" style="display:none;margin-bottom:13px;">
+      <div class="mf">
+        <label style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
+          📷 الصور المرفقة
+          <span id="d-img-count" style="padding:2px 9px;border-radius:12px;font-size:11px;background:rgba(200,168,75,.12);color:var(--shine);font-weight:700;border:1px solid rgba(200,168,75,.2);"></span>
+        </label>
+        <div id="d-images-grid" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+      </div>
+    </div>
+    <div class="mf"><label>ملاحظة الموظف</label><textarea id="d-note" placeholder="ملاحظة للمواطن أو الملف..."></textarea></div>
+    <div class="mact">
+      <button class="mbtn mb-cl" onclick="closeDet()">إغلاق</button>
+      <button class="mbtn mb-print" onclick="openPrintModal(curRef)">🖨️ طباعة</button>
+      <button class="mbtn mb-clone" onclick="openClone(curRef)" title="إنشاء نسخة من هذا الطلب">📋 استنساخ</button>
+      <button class="mbtn mb-no" onclick="updSt('rejected')" id="dReject">❌ رفض</button>
+      <button class="mbtn mb-ok" onclick="updSt('approved')" id="dApprove">✅ اعتماد</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT USER MODAL -->
+<div class="ov" id="userOv">
+  <div class="mbox">
+    <h3 id="userModalTitle">➕ إضافة مستخدم جديد</h3>
+    <input type="hidden" id="editUserKey" />
+    <div class="m2">
+      <div class="mf"><label>اسم المستخدم (للدخول) *</label>
+        <div class="fg" style="margin:0;"><input class="tin" style="width:100%" id="nu-user" placeholder="بدون مسافات" /></div>
+      </div>
+      <div class="mf"><label>الاسم الكامل *</label>
+        <div class="fg" style="margin:0;"><input class="tin" style="width:100%" id="nu-name" placeholder="الاسم الثلاثي" /></div>
+      </div>
+    </div>
+    <div class="m2">
+      <div class="mf">
+        <label>كلمة المرور * <span id="pwEditHint" style="font-size:10px;color:var(--muted);display:none;">(اتركها فارغة للإبقاء)</span></label>
+        <div class="lin-wrap" style="margin:0;">
+          <input class="tin" style="width:100%;padding-left:36px;" type="password" id="nu-pass" placeholder="كلمة مرور قوية" oninput="checkPwStrength()" />
+          <button class="eye-btn" onclick="toggleNewPw()" type="button">👁</button>
+        </div>
+        <div class="pw-strength" id="pwBar"></div>
+        <div class="pw-label" id="pwLabel"></div>
+      </div>
+      <div class="mf"><label>الدور الوظيفي *</label>
+        <select class="tin" style="width:100%" id="nu-role" onchange="updatePermsByRole()">
+          <option value="employee">موظف</option>
+          <option value="supervisor">مشرف</option>
+          <option value="admin">مدير</option>
+        </select>
+      </div>
+    </div>
+    <div class="mf" style="margin-bottom:13px;">
+      <label>الصلاحيات</label>
+      <div id="permsGrid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+    </div>
+    <div class="mact">
+      <button class="mbtn mb-cl" onclick="closeUserModal()">إلغاء</button>
+      <button class="mbtn mb-ok" onclick="saveUser()">💾 حفظ المستخدم</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT MODAL -->
+<div class="ov" id="printModalOv">
+  <div class="mbox print-modal-box">
+    <h3 style="display:flex;align-items:center;gap:8px;">🖨️ طباعة المعاملة</h3>
+
+    <!-- اختيار القالب -->
+    <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;">📐 اختر قالب الطباعة</div>
+    <div class="print-tpl-grid">
+      <div class="print-tpl sel" id="tpl-official" onclick="selectPrintTpl('official',this)">
+        <div class="pt-icon">📜</div>
+        <div class="pt-name">رسمي كامل</div>
+        <div class="pt-desc">ترويسة + بيانات + صور</div>
+      </div>
+      <div class="print-tpl" id="tpl-receipt" onclick="selectPrintTpl('receipt',this)">
+        <div class="pt-icon">🧾</div>
+        <div class="pt-name">إيصال استلام</div>
+        <div class="pt-desc">مختصر للمواطن</div>
+      </div>
+      <div class="print-tpl" id="tpl-internal" onclick="selectPrintTpl('internal',this)">
+        <div class="pt-icon">📋</div>
+        <div class="pt-name">مذكرة داخلية</div>
+        <div class="pt-desc">للموظفين فقط</div>
+      </div>
+      <div class="print-tpl" id="tpl-summary" onclick="selectPrintTpl('summary',this)">
+        <div class="pt-icon">📊</div>
+        <div class="pt-name">ملخص مدير</div>
+        <div class="pt-desc">بدون تفاصيل حساسة</div>
+      </div>
+      <div class="print-tpl" id="tpl-followup" onclick="selectPrintTpl('followup',this)">
+        <div class="pt-icon">📞</div>
+        <div class="pt-name">ورقة متابعة</div>
+        <div class="pt-desc">جدول إجراءات فارغ</div>
+      </div>
+      <div class="print-tpl" id="tpl-archive" onclick="selectPrintTpl('archive',this)">
+        <div class="pt-icon">🗃️</div>
+        <div class="pt-name">بطاقة أرشفة</div>
+        <div class="pt-desc">A5 مضغوطة للحفظ</div>
+      </div>
+    </div>
+
+    <!-- خيارات الطباعة -->
+    <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">⚙️ خيارات</div>
+    <div class="print-opts">
+      <label class="print-opt-row">
+        <input type="checkbox" id="popt-header" checked />
+        <span>🏛️ إظهار ترويسة المديرية والشعار</span>
+      </label>
+      <label class="print-opt-row">
+        <input type="checkbox" id="popt-images" checked />
+        <span>📷 تضمين الصور المرفقة</span>
+      </label>
+      <label class="print-opt-row">
+        <input type="checkbox" id="popt-note" checked />
+        <span>🗒️ إظهار ملاحظة الموظف</span>
+      </label>
+      <label class="print-opt-row">
+        <input type="checkbox" id="popt-stamp" checked />
+        <span>📌 إضافة مربع التوقيع والختم</span>
+      </label>
+      <label class="print-opt-row">
+        <input type="checkbox" id="popt-qr" />
+        <span>🔲 إضافة رقم الطلب بالباركود النصي</span>
+      </label>
+      <label class="print-opt-row">
+        <input type="checkbox" id="popt-watermark" />
+        <span>🔏 إضافة علامة مائية (سري / رسمي)</span>
+      </label>
+    </div>
+
+    <!-- حجم الورق -->
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+      <span style="font-size:12px;color:var(--muted);font-weight:700;">📄 حجم الورق:</span>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;">
+        <input type="radio" name="paperSize" value="A4" checked style="accent-color:var(--gold);"> A4
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;">
+        <input type="radio" name="paperSize" value="A5" style="accent-color:var(--gold);"> A5
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;">
+        <input type="radio" name="paperSize" value="letter" style="accent-color:var(--gold);"> Letter
+      </label>
+      <span style="font-size:12px;color:var(--muted);font-weight:700;margin-right:10px;">🔄 الاتجاه:</span>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;">
+        <input type="radio" name="paperOrient" value="portrait" checked style="accent-color:var(--gold);"> عمودي
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;">
+        <input type="radio" name="paperOrient" value="landscape" style="accent-color:var(--gold);"> أفقي
+      </label>
+    </div>
+
+    <!-- معاينة -->
+    <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">👁️ معاينة</div>
+    <div class="print-preview-box">
+      <div id="printPreviewInner" style="transform:scale(.55);transform-origin:top right;width:182%;direction:rtl;background:white;"></div>
+    </div>
+
+    <div class="mact">
+      <button class="mbtn mb-cl" onclick="closePrintModal()">إغلاق</button>
+      <button class="mbtn" style="background:rgba(255,255,255,.08);color:var(--muted);border:1px solid rgba(255,255,255,.1);" onclick="refreshPrintPreview()">🔄 تحديث المعاينة</button>
+      <button class="mbtn mb-print" onclick="executePrint()">🖨️ طباعة الآن</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLONE MODAL -->
+<div class="ov" id="cloneOv">
+  <div class="mbox" style="max-width:560px;max-height:90vh;overflow-y:auto;">
+    <h3 style="display:flex;align-items:center;gap:10px;">
+      📋 استنساخ المعاملة
+      <span class="clone-diff-badge">نسخة جديدة</span>
+    </h3>
+
+    <!-- الطلب الأصلي -->
+    <div class="clone-section">
+      <div class="clone-section-title">📌 المعاملة الأصلية</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <div style="flex:1;min-width:140px;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:3px;">رقم المعاملة</div>
+          <div id="clone-orig-ref" style="font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;color:var(--shine);"></div>
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:3px;">القسم</div>
+          <div id="clone-orig-dept" style="font-size:13px;color:white;font-weight:700;"></div>
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:3px;">مقدم الطلب</div>
+          <div id="clone-orig-name" style="font-size:13px;color:white;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- رقم النسخة الجديدة -->
+    <div class="clone-section">
+      <div class="clone-section-title">🔢 رقم المعاملة الجديدة</div>
+      <div class="clone-ref-preview" id="clone-new-ref">GOV-XXXX-XXXX</div>
+      <div style="text-align:center;margin-top:8px;">
+        <button onclick="regenerateCloneRef()" style="padding:6px 16px;border-radius:20px;background:rgba(200,168,75,.12);border:1px solid rgba(200,168,75,.2);color:var(--shine);cursor:pointer;font-size:12px;font-family:'Cairo',sans-serif;">🔄 توليد رقم جديد</button>
+      </div>
+    </div>
+
+    <!-- تعديل بيانات النسخة -->
+    <div class="clone-section">
+      <div class="clone-section-title">✏️ تعديل بيانات النسخة (اختياري)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="clone-field">
+          <label>الاسم الكامل <span style="color:var(--red);">*</span></label>
+          <input id="clone-name" placeholder="اسم مقدم الطلب" />
+        </div>
+        <div class="clone-field">
+          <label>رقم الهاتف <span style="color:var(--red);">*</span></label>
+          <input id="clone-phone" placeholder="07xxxxxxxxx" />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="clone-field">
+          <label>البريد الإلكتروني</label>
+          <input id="clone-email" type="email" placeholder="example@gmail.com" />
+        </div>
+        <div class="clone-field">
+          <label>القسم</label>
+          <select id="clone-dept">
+            <option value="env"    data-name="قسم البيئة">🌿 قسم البيئة</option>
+            <option value="urban"  data-name="تنظيم المدن">🏗️ تنظيم المدن</option>
+            <option value="parks"  data-name="الحدائق والمساحات">🌳 الحدائق والمساحات</option>
+            <option value="permit" data-name="إجازات البناء">📋 إجازات البناء</option>
+            <option value="roads"  data-name="الطرق والبنية التحتية">🛣️ الطرق والبنية التحتية</option>
+            <option value="health" data-name="الصحة البيئية">🏥 الصحة البيئية</option>
+          </select>
+        </div>
+      </div>
+      <div class="clone-field">
+        <label>نوع الطلب</label>
+        <input id="clone-type" placeholder="نوع الطلب أو الخدمة" />
+      </div>
+      <div class="clone-field">
+        <label>تفاصيل الطلب</label>
+        <textarea id="clone-details" rows="3" placeholder="تفاصيل المعاملة..."></textarea>
+      </div>
+    </div>
+
+    <!-- خيارات الاستنساخ -->
+    <div class="clone-section">
+      <div class="clone-section-title">⚙️ خيارات الاستنساخ</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:9px 11px;border-radius:9px;background:rgba(255,255,255,.03);">
+          <input type="checkbox" id="clone-copy-images" style="width:16px;height:16px;accent-color:var(--gold);margin-top:2px;" checked />
+          <div><div style="font-size:13px;font-weight:700;color:white;">📷 نسخ الصور المرفقة</div>
+          <div style="font-size:11px;color:var(--muted);">تضمين نفس الصور في المعاملة الجديدة</div></div>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:9px 11px;border-radius:9px;background:rgba(255,255,255,.03);">
+          <input type="checkbox" id="clone-reset-status" style="width:16px;height:16px;accent-color:var(--gold);margin-top:2px;" checked />
+          <div><div style="font-size:13px;font-weight:700;color:white;">🔄 إعادة الحالة إلى "قيد المراجعة"</div>
+          <div style="font-size:11px;color:var(--muted);">تبدأ النسخة الجديدة كطلب جديد لم يُراجع</div></div>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:9px 11px;border-radius:9px;background:rgba(255,255,255,.03);">
+          <input type="checkbox" id="clone-clear-note" style="width:16px;height:16px;accent-color:var(--gold);margin-top:2px;" checked />
+          <div><div style="font-size:13px;font-weight:700;color:white;">🗒️ مسح ملاحظة الموظف</div>
+          <div style="font-size:11px;color:var(--muted);">لا تنقل الملاحظات السابقة للنسخة الجديدة</div></div>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:9px 11px;border-radius:9px;background:rgba(255,255,255,.03);">
+          <input type="checkbox" id="clone-add-link" style="width:16px;height:16px;accent-color:var(--gold);margin-top:2px;" checked />
+          <div><div style="font-size:13px;font-weight:700;color:white;">🔗 إضافة إشارة للمعاملة الأصلية</div>
+          <div style="font-size:11px;color:var(--muted);">يُضاف رقم الأصل تلقائياً في التفاصيل</div></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- ملخص ما سيتم -->
+    <div id="clone-summary" style="padding:12px 14px;border-radius:11px;background:rgba(20,184,166,.07);border:1px solid rgba(20,184,166,.18);font-size:12px;color:rgba(255,255,255,.7);line-height:1.9;margin-bottom:4px;"></div>
+
+    <div class="mact">
+      <button class="mbtn mb-cl" onclick="closeClone()">إلغاء</button>
+      <button class="mbtn mb-clone" onclick="doClone()" id="cloneConfirmBtn">📋 تأكيد الاستنساخ</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEST SMS MODAL -->
+<div class="ov" id="testSmsOv">
+  <div class="mbox" style="max-width:420px;">
+    <h3>🧪 إرسال رسالة تجريبية</h3>
+    <div class="fg">
+      <label>رقم الهاتف للاختبار <span style="color:var(--muted);font-size:10px;">(مع مفتاح الدولة)</span></label>
+      <input class="tin" style="width:100%;padding:11px 14px;border-radius:10px;" id="test-sms-phone" placeholder="+9647xxxxxxxxx" dir="ltr" />
+    </div>
+    <div class="fg" style="margin-top:12px;">
+      <label>نص الرسالة</label>
+      <textarea class="tin" style="width:100%;min-height:80px;padding:11px 14px;border-radius:10px;resize:vertical;" id="test-sms-text">هذه رسالة تجريبية من نظام مديرية بلدية الكرمة — محافظة الأنبار.</textarea>
+    </div>
+    <div id="testSmsResult" style="margin-top:10px;"></div>
+    <div class="mact">
+      <button class="mbtn mb-cl" onclick="document.getElementById('testSmsOv').classList.remove('on')">إلغاء</button>
+      <button class="mbtn mb-pdf" id="sendTestBtn" onclick="sendTestSms()">📤 إرسال الآن</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  SECURITY & CRYPTO
+// ══════════════════════════════════════════════
+
+// Simple hash using SubtleCrypto
+async function hashPw(pw){
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(pw + 'GOV_SALT_ANBAR_KARMA_2025'));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// Protect against DevTools (basic deterrent)
+(function(){
+  setInterval(()=>{
+    const t = new Date();
+    debugger;
+    if(new Date()-t > 100){ document.body.innerHTML=''; location.reload(); }
+  }, 3000);
+})();
+
+// Disable right-click context menu on admin
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// ══════════════════════════════════════════════
+//  CONFIG & DEFAULTS
+// ══════════════════════════════════════════════
+const DEFAULT_CFG = {
+  sysName:'مديرية بلدية الكرمة',
+  sysGov:'محافظة الأنبار',
+  sysSub:'الجمهورية العراقية',
+  sysPhone:'',
+  sessionMinutes: 30,
+  maxAttempts: 5,
+  lockSeconds: 60,
+};
+const DEFAULT_DEPTS = [
+  {id:'env',  name:'قسم البيئة',         icon:'🌿', active:true},
+  {id:'urban',name:'تنظيم المدن',         icon:'🏗️', active:true},
+  {id:'parks',name:'قسم الحدائق',         icon:'🌳', active:true},
+  {id:'permit',name:'إجازات البناء',      icon:'📋', active:true},
+  {id:'roads',name:'الطرق والبنية التحتية',icon:'🛣️',active:true},
+  {id:'health',name:'الصحة البيئية',      icon:'🏥', active:true},
+];
+const PERM_LIST = [
+  {k:'view',    l:'عرض الطلبات'},
+  {k:'approve', l:'اعتماد'},
+  {k:'reject',  l:'رفض'},
+  {k:'archive', l:'أرشفة'},
+  {k:'export',  l:'تصدير'},
+  {k:'print',   l:'طباعة'},
+  {k:'settings',l:'الإعدادات'},
+  {k:'users',   l:'إدارة المستخدمين'},
+];
+const ROLE_PERMS = {
+  admin:    ['view','approve','reject','archive','export','print','settings','users'],
+  supervisor:['view','approve','reject','archive','export','print','settings'],
+  employee: ['view','print'],
+};
+
+function getCfg(){ try{return {...DEFAULT_CFG,...JSON.parse(localStorage.getItem('govCfg')||'{}')};}catch(e){return {...DEFAULT_CFG};} }
+function saveCfg(c){ localStorage.setItem('govCfg',JSON.stringify(c)); }
+function getDepts(){ try{const d=JSON.parse(localStorage.getItem('govDepts')||'null');return d||DEFAULT_DEPTS;}catch(e){return DEFAULT_DEPTS;} }
+function saveDepts(d){ localStorage.setItem('govDepts',JSON.stringify(d)); }
+function getDB(){ try{return JSON.parse(localStorage.getItem('govReqs')||'[]');}catch(e){return[];} }
+function saveDB(d){ localStorage.setItem('govReqs',JSON.stringify(d)); }
+
+// ── Users storage ──
+async function initDefaultUsers(){
+  const existing = localStorage.getItem('govUsers');
+  if(existing) return;
+  const adminHash = await hashPw('Admin@2025');
+  const supHash   = await hashPw('Super@2025');
+  const empHash   = await hashPw('Emp@2025');
+  const users = {
+    admin:     {name:'مدير النظام',    role:'admin',      passHash:adminHash, perms:ROLE_PERMS.admin,      initial:'م', active:true},
+    supervisor:{name:'المشرف العام',   role:'supervisor', passHash:supHash,   perms:ROLE_PERMS.supervisor, initial:'ع', active:true},
+    employee:  {name:'موظف الدائرة',   role:'employee',   passHash:empHash,   perms:ROLE_PERMS.employee,   initial:'و', active:true},
+  };
+  localStorage.setItem('govUsers',JSON.stringify(users));
+}
+function getUsers(){ try{return JSON.parse(localStorage.getItem('govUsers')||'{}');}catch(e){return {};} }
+function saveUsers(u){ localStorage.setItem('govUsers',JSON.stringify(u)); }
+
+// ── Security state ──
+let loginAttempts = parseInt(sessionStorage.getItem('loginAttempts')||'0');
+let lockUntil     = parseInt(sessionStorage.getItem('lockUntil')||'0');
+let CU = null; // current user object
+let curRef = null;
+let deptFilter = '';
+let tblPage = 1;
+const PER_PAGE = 12;
+let sessionEnd = 0;
+let sessionInterval = null;
+let dashInterval = null;
+let lockInterval = null;
+
+// ── Charts ──
+let chDept=null, chStatus=null, chRDept=null, chRadar=null;
+
+// ══════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════
+(async function boot(){
+  await initDefaultUsers();
+  applySystemName();
+  checkLockState();
+})();
+
+function applySystemName(){
+  const c = getCfg();
+  const n = c.sysName||DEFAULT_CFG.sysName;
+  const g = c.sysGov||DEFAULT_CFG.sysGov;
+  const s = c.sysSub||DEFAULT_CFG.sysSub;
+  // login screen
+  const el1 = document.getElementById('sysNameLogin');
+  const el2 = document.getElementById('sysSubLogin');
+  if(el1) el1.textContent = n;
+  if(el2) el2.innerHTML = g + ' — ' + s + '<br>لوحة الإدارة المحمية';
+  // topbar
+  const t1 = document.getElementById('topbarName');
+  const t2 = document.getElementById('topbarSub');
+  if(t1) t1.textContent = n;
+  if(t2) t2.textContent = g + ' — لوحة الإدارة';
+  document.title = n + ' — ' + g;
+}
+
+// ══════════════════════════════════════════════
+//  LOCK / ATTEMPTS
+// ══════════════════════════════════════════════
+function checkLockState(){
+  const now = Date.now();
+  if(lockUntil > now){
+    showLockBanner(Math.ceil((lockUntil-now)/1000));
+  }
+}
+function showLockBanner(sec){
+  document.getElementById('lockBanner').style.display='block';
+  document.getElementById('loginBtn').disabled = true;
+  document.getElementById('loginErr').style.display='none';
+  let s = sec;
+  document.getElementById('lockTimer').textContent = s;
+  if(lockInterval) clearInterval(lockInterval);
+  lockInterval = setInterval(()=>{
+    s--;
+    document.getElementById('lockTimer').textContent = s;
+    if(s<=0){
+      clearInterval(lockInterval);
+      document.getElementById('lockBanner').style.display='none';
+      document.getElementById('loginBtn').disabled = false;
+      loginAttempts = 0;
+      sessionStorage.setItem('loginAttempts','0');
+    }
+  },1000);
+}
+
+// ══════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════
+async function doLogin(){
+  const now = Date.now();
+  if(lockUntil > now) return;
+
+  const u = document.getElementById('loginU').value.trim();
+  const p = document.getElementById('loginP').value;
+  if(!u||!p){ showLoginErr('يرجى إدخال اسم المستخدم وكلمة المرور'); return; }
+
+  const users = getUsers();
+  const cfg = getCfg();
+  const maxAttempts = cfg.maxAttempts||5;
+  const lockSec = cfg.lockSeconds||60;
+
+  // Check user exists and active
+  if(users[u] && users[u].active){
+    const h = await hashPw(p);
+    if(h === users[u].passHash){
+      // SUCCESS
+      loginAttempts = 0;
+      sessionStorage.setItem('loginAttempts','0');
+      CU = {key:u, ...users[u]};
+      addLog('login', `✅ تسجيل دخول ناجح للمستخدم: ${users[u].name}`, '#3dab6a');
+      startSession();
+      return;
+    }
+  }
+
+  // FAIL
+  loginAttempts++;
+  sessionStorage.setItem('loginAttempts', loginAttempts);
+  addLog('fail', `⚠️ محاولة دخول فاشلة للمستخدم: "${u}"`, '#f59e0b');
+
+  const remaining = maxAttempts - loginAttempts;
+  if(loginAttempts >= maxAttempts){
+    lockUntil = Date.now() + lockSec*1000;
+    sessionStorage.setItem('lockUntil', lockUntil);
+    addLog('lock', `🔒 تم قفل النظام لمدة ${lockSec} ثانية`, '#e05252');
+    showLockBanner(lockSec);
+  } else {
+    showLoginErr(`❌ بيانات الدخول غير صحيحة — متبقي ${remaining} محاولة`);
+    const warn = document.getElementById('attemptsWarn');
+    warn.style.display='block';
+    warn.textContent=`⚠️ تحذير: ${loginAttempts} من ${maxAttempts} محاولات مستخدمة`;
+    // shake
+    const card = document.querySelector('.lcard');
+    card.style.animation='none';
+    setTimeout(()=>{card.style.animation='shake .4s ease';},10);
+  }
+}
+
+function showLoginErr(msg){
+  const e = document.getElementById('loginErr');
+  e.textContent = msg; e.style.display='block';
+  setTimeout(()=>{ e.style.display='none'; },4000);
+}
+
+// ══════════════════════════════════════════════
+//  SESSION
+// ══════════════════════════════════════════════
+function startSession(){
+  const cfg = getCfg();
+  const mins = cfg.sessionMinutes||30;
+  sessionEnd = Date.now() + mins*60*1000;
+
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+
+  // Apply user info
+  document.getElementById('uNameTop').textContent = CU.name;
+  document.getElementById('uInitTop').textContent = CU.initial||CU.name[0];
+  const roleLabels={admin:'مدير النظام',supervisor:'مشرف',employee:'موظف'};
+  const roleColors={admin:'rgba(200,168,75,.15)',supervisor:'rgba(59,130,246,.15)',employee:'rgba(61,171,106,.15)'};
+  const roleText={admin:'var(--shine)',supervisor:'#93c5fd',employee:'#6ee7b7'};
+  const rt = document.getElementById('uRoleTag');
+  rt.textContent = roleLabels[CU.role]||CU.role;
+  rt.style.background = roleColors[CU.role]||'';
+  rt.style.color = roleText[CU.role]||'';
+
+  // Show admin/supervisor navs
+  if(CU.perms.includes('settings')){
+    document.getElementById('adminNav').style.display='block';
+    document.getElementById('settingsNav').style.display='flex';
+  }
+  if(CU.perms.includes('users')){
+    document.getElementById('usersNav').style.display='flex';
+  }
+
+  // Session countdown
+  if(sessionInterval) clearInterval(sessionInterval);
+  sessionInterval = setInterval(()=>{
+    const rem = sessionEnd - Date.now();
+    if(rem<=0){
+      clearInterval(sessionInterval);
+      addLog('logout','⏱ انتهت مدة الجلسة تلقائياً','#f59e0b');
+      doLogout();
+      return;
+    }
+    const m = Math.floor(rem/60000);
+    const s = Math.floor((rem%60000)/1000);
+    document.getElementById('sessionCountdown').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    // warn last 2 min
+    const t = document.getElementById('sessionTimer');
+    if(rem<120000){ t.style.background='rgba(224,82,82,.12)'; t.style.color='#ff8080'; }
+  },1000);
+
+  loadDash();
+  if(dashInterval) clearInterval(dashInterval);
+  dashInterval = setInterval(loadDash, 5000);
+}
+
+function doLogout(){
+  if(dashInterval) clearInterval(dashInterval);
+  if(sessionInterval) clearInterval(sessionInterval);
+  CU = null; curRef = null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('loginU').value='';
+  document.getElementById('loginP').value='';
+  document.getElementById('attemptsWarn').style.display='none';
+  applySystemName();
+}
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+const SECS = ['overview','requests','archive','reports','logs','settings','users'];
+function goSec(id, btn){
+  SECS.forEach(s=>{ const el=document.getElementById('sec-'+s); if(el){el.classList.remove('on');el.style.display='none';} });
+  const el = document.getElementById('sec-'+id);
+  if(el){ el.style.display='block'; setTimeout(()=>el.classList.add('on'),10); }
+  document.querySelectorAll('.snav').forEach(b=>b.classList.remove('act'));
+  if(btn) btn.classList.add('act');
+  if(id==='requests') renderTbl();
+  if(id==='archive')  renderArch();
+  if(id==='reports')  renderReports();
+  if(id==='settings') renderSettings();
+  if(id==='users')    renderUsers();
+  if(id==='logs')     renderLogs();
+}
+function filterDept(d, btn){
+  deptFilter=d;
+  document.getElementById('fDept').value=d;
+  goSec('requests',btn);
+}
+
+// ══════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════
+function loadDash(){
+  const data = getDB();
+  const act  = data.filter(r=>!r.archived);
+  const arch = data.filter(r=>r.archived);
+  const pend = act.filter(r=>r.status==='pending').length;
+  const appr = act.filter(r=>r.status==='approved').length;
+  const rej  = act.filter(r=>r.status==='rejected').length;
+
+  setText('st-total', act.length);
+  setText('st-pend',  pend);
+  setText('st-appr',  appr);
+  setText('st-rej',   rej);
+  setText('st-arch',  arch.length);
+  setText('sb-pend',  pend);
+
+  const depts = getDepts().map(d=>d.id);
+  depts.forEach(d=>{
+    const el=document.getElementById('sb-'+d);
+    if(el) el.textContent = act.filter(r=>r.dept===d).length;
+  });
+
+  renderCharts(act);
+  if(document.getElementById('sec-requests').classList.contains('on')) renderTbl();
+}
+
+const deptMeta = {
+  env:{name:'البيئة',color:'#3dab6a'},
+  urban:{name:'تنظيم المدن',color:'#3b82f6'},
+  parks:{name:'الحدائق',color:'#84cc16'},
+  permit:{name:'إجازة البناء',color:'#f59e0b'},
+  roads:{name:'الطرق',color:'#a855f7'},
+  health:{name:'الصحة البيئية',color:'#ef4444'},
+};
+
+function renderCharts(data){
+  const depts = getDepts();
+  const ids  = depts.map(d=>d.id);
+  const lbls = depts.map(d=>d.name);
+  const cnts = ids.map(id=>data.filter(r=>r.dept===id).length);
+  const cols = ids.map(id=>(deptMeta[id]||{color:'#888'}).color);
+  const co = {plugins:{legend:{labels:{color:'rgba(255,255,255,.65)',font:{family:'Cairo',size:10}}}}};
+
+  const dc=document.getElementById('cDept').getContext('2d');
+  if(chDept) chDept.destroy();
+  chDept=new Chart(dc,{type:'bar',data:{labels:lbls,datasets:[{data:cnts,backgroundColor:cols.map(c=>c+'99'),borderColor:cols,borderWidth:2,borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,...co,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'rgba(255,255,255,.55)',font:{family:'Cairo',size:9}},grid:{color:'rgba(255,255,255,.04)'}},
+              y:{ticks:{color:'rgba(255,255,255,.55)'},grid:{color:'rgba(255,255,255,.04)'}}}}});
+
+  const sc=document.getElementById('cStatus').getContext('2d');
+  if(chStatus) chStatus.destroy();
+  chStatus=new Chart(sc,{type:'doughnut',data:{
+    labels:['قيد المراجعة','معتمدة','مرفوضة'],
+    datasets:[{data:[data.filter(r=>r.status==='pending').length,data.filter(r=>r.status==='approved').length,data.filter(r=>r.status==='rejected').length],
+      backgroundColor:['#f59e0b66','#3dab6a66','#ef444466'],borderColor:['#f59e0b','#3dab6a','#ef4444'],borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,...co}});
+}
+
+// ══════════════════════════════════════════════
+//  TABLE
+// ══════════════════════════════════════════════
+function renderTbl(){
+  if(!CU) return;
+  const data = getDB().filter(r=>!r.archived);
+  const q = (document.getElementById('srch')?.value||'').toLowerCase();
+  const fD= document.getElementById('fDept')?.value || deptFilter;
+  const fS= document.getElementById('fStatus')?.value||'';
+  const icons={env:'🌿',urban:'🏗️',parks:'🌳',permit:'📋',roads:'🛣️',health:'🏥'};
+  const sl={pending:'⏳ قيد المراجعة',approved:'✅ معتمد',rejected:'❌ مرفوض'};
+  const bc={pending:'bp',approved:'ba',rejected:'br'};
+
+  let filtered = data.filter(r=>
+    (!fD||r.dept===fD) && (!fS||r.status===fS) &&
+    (!q||(r.name||'').toLowerCase().includes(q)||(r.ref||'').toLowerCase().includes(q)||(r.phone||'').includes(q))
+  ).reverse();
+
+  const total = filtered.length;
+  const pages = Math.ceil(total/PER_PAGE)||1;
+  if(tblPage>pages) tblPage=1;
+  const slice = filtered.slice((tblPage-1)*PER_PAGE, tblPage*PER_PAGE);
+
+  setText('pgInfo', total + ' طلب');
+
+  let pg='';
+  for(let i=1;i<=pages;i++) pg+=`<button class="pgb${i===tblPage?' act':''}" onclick="tblPage=${i};renderTbl()">${i}</button>`;
+  document.getElementById('pgBtns').innerHTML=pg;
+
+  const canAct = CU.perms.includes('approve');
+  const canArch = CU.perms.includes('archive');
+
+  if(!slice.length){
+    document.getElementById('tbody').innerHTML=`<tr><td colspan="8"><div class="empty"><div class="ei">📭</div><p>لا توجد طلبات</p></div></td></tr>`;
+    return;
+  }
+  document.getElementById('tbody').innerHTML = slice.map((r,i)=>`
+    <tr>
+      <td>${(tblPage-1)*PER_PAGE+i+1}</td>
+      <td style="font-family:'Tajawal',sans-serif;font-weight:800;color:var(--shine);font-size:12px;">${r.ref}</td>
+      <td>${icons[r.dept]||''} ${r.deptName||''}</td>
+      <td>${r.name}</td>
+      <td style="direction:ltr;text-align:right;">${r.phone}</td>
+      <td>${r.date}</td>
+      <td style="text-align:center;">${(r.imageCount||0)>0?`<span style="padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700;background:rgba(200,168,75,.12);color:var(--shine);border:1px solid rgba(200,168,75,.2);">📷 ${r.imageCount}</span>`:'<span style="color:var(--muted);font-size:11px;">—</span>'}</td>
+      <td><span class="badge-inline ${bc[r.status]||'bp'}">${sl[r.status]||'—'}</span></td>
+      <td><div class="arow">
+        <button class="ab ab-v" onclick="openDet('${r.ref}')">تفاصيل</button>
+        <button class="ab ab-p" onclick="openPrintModal('${r.ref}')" title="طباعة">🖨️</button>
+        <button class="ab ab-clone" onclick="openClone('${r.ref}')" title="استنساخ الطلب">📋</button>
+        ${canAct&&r.status==='pending'?`<button class="ab ab-ok" onclick="quickUpd('${r.ref}','approved')">✓</button><button class="ab ab-no" onclick="quickUpd('${r.ref}','rejected')">✗</button>`:''}
+        ${canArch?`<button class="ab ab-a" onclick="archReq('${r.ref}')">أرشفة</button>`:''}
+      </div></td>
+    </tr>`).join('');
+}
+
+// ══════════════════════════════════════════════
+//  ARCHIVE
+// ══════════════════════════════════════════════
+function archReq(ref){
+  const db=getDB(); const i=db.findIndex(r=>r.ref===ref);
+  if(i===-1) return;
+  db[i].archived=true; saveDB(db);
+  addLog('archive',`📦 تم أرشفة الطلب: ${ref}`,'#9333ea');
+  loadDash(); renderTbl(); toast('🗂️ تم الأرشفة','s');
+}
+function unarchReq(ref){
+  const db=getDB(); const i=db.findIndex(r=>r.ref===ref);
+  if(i===-1) return;
+  db[i].archived=false; saveDB(db);
+  addLog('unarchive',`↩ تم إلغاء أرشفة الطلب: ${ref}`,'#3dab6a');
+  loadDash(); renderArch(); toast('✅ تم الاسترجاع','s');
+}
+function renderArch(){
+  const data=getDB().filter(r=>r.archived);
+  const q=(document.getElementById('archSrch')?.value||'').toLowerCase();
+  const filtered=data.filter(r=>!q||(r.name||'').toLowerCase().includes(q)||(r.ref||'').toLowerCase().includes(q)).reverse();
+  const icons={env:'🌿',urban:'🏗️',parks:'🌳',permit:'📋',roads:'🛣️',health:'🏥'};
+  const sl={pending:'⏳',approved:'✅',rejected:'❌'};
+  const bc={pending:'bp',approved:'ba',rejected:'br'};
+  if(!filtered.length){
+    document.getElementById('archTbody').innerHTML=`<tr><td colspan="7"><div class="empty"><div class="ei">🗂️</div><p>الأرشيف فارغ</p></div></td></tr>`;
+    return;
+  }
+  document.getElementById('archTbody').innerHTML=filtered.map((r,i)=>`
+    <tr><td>${i+1}</td>
+    <td style="color:var(--shine);font-weight:700;">${r.ref}</td>
+    <td>${icons[r.dept]||''} ${r.deptName||''}</td>
+    <td>${r.name}</td><td>${r.date}</td>
+    <td><span class="badge-inline ${bc[r.status]||'bp'}">${sl[r.status]||''}</span></td>
+    <td><button class="ab ab-ok" onclick="unarchReq('${r.ref}')">↩ استرجاع</button></td></tr>`).join('');
+}
+
+// ══════════════════════════════════════════════
+//  DETAIL MODAL
+// ══════════════════════════════════════════════
+function openDet(ref){
+  const db=getDB(); const r=db.find(x=>x.ref===ref); if(!r) return;
+  curRef=ref;
+  const sl={pending:'⏳ قيد المراجعة',approved:'✅ معتمد',rejected:'❌ مرفوض'};
+  ['ref','dept','name','phone','email','type','date','details'].forEach(k=>{
+    const el=document.getElementById('d-'+k);
+    if(el) el.textContent = k==='dept'?r.deptName||'—': k==='email'?r.email||'—': k==='type'?r.type||'—': k==='details'?r.details||'—': r[k]||'—';
+  });
+  document.getElementById('d-status').textContent=sl[r.status]||r.status;
+  document.getElementById('d-note').value=r.note||'';
+
+  // ── الصور المرفقة ──
+  const imgs = r.images||[];
+  const imgSection = document.getElementById('d-images-section');
+  const imgGrid    = document.getElementById('d-images-grid');
+  const imgCount   = document.getElementById('d-img-count');
+  if(imgs.length>0){
+    imgSection.style.display='';
+    imgCount.textContent = imgs.length + ' صورة';
+    imgGrid.innerHTML = imgs.map((b64,i)=>`
+      <div class="admin-img-wrap">
+        <img src="${b64}" class="admin-img-thumb" onclick="adminViewImg(${i},'${ref}')" title="اضغط للتكبير" />
+        <div class="img-num">${i+1}/${imgs.length}</div>
+      </div>`).join('');
+  } else {
+    imgSection.style.display='';
+    imgCount.textContent='لا توجد صور';
+    imgGrid.innerHTML='<div class="no-img-badge">📷 لم يرفق المواطن صوراً مع هذا الطلب</div>';
+  }
+
+  const canAct=CU.perms.includes('approve');
+  document.getElementById('dApprove').style.display=canAct?'':'none';
+  document.getElementById('dReject').style.display=canAct?'':'none';
+  document.getElementById('detOv').classList.add('on');
+}
+
+function adminViewImg(idx, ref){
+  const db=getDB(); const r=db.find(x=>x.ref===ref);
+  const imgs = r?.images||[];
+  if(!imgs[idx]) return;
+  let cur=idx;
+  const ov=document.createElement('div');
+  ov.id='imgLightbox';
+  ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;';
+  const render=()=>{
+    ov.innerHTML=`
+      <div style="position:absolute;top:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:12px;">${cur+1} / ${imgs.length}</div>
+      <button onclick="document.getElementById('imgLightbox').remove()" style="position:absolute;top:14px;right:16px;background:rgba(255,255,255,.1);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;">✕</button>
+      <img src="${imgs[cur]}" style="max-width:90vw;max-height:80vh;border-radius:12px;object-fit:contain;box-shadow:0 0 80px rgba(0,0,0,.7);" />
+      <div style="display:flex;gap:16px;">
+        ${cur>0?`<button onclick="cur--;render()" style="padding:9px 22px;border-radius:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:white;cursor:pointer;font-size:13px;">◀ السابق</button>`:''}
+        <a href="${imgs[cur]}" download="صورة-${ref}-${cur+1}.jpg" style="padding:9px 22px;border-radius:20px;background:rgba(200,168,75,.18);border:1px solid rgba(200,168,75,.3);color:var(--shine);text-decoration:none;font-size:13px;font-weight:700;">💾 تحميل</a>
+        ${cur<imgs.length-1?`<button onclick="cur++;render()" style="padding:9px 22px;border-radius:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:white;cursor:pointer;font-size:13px;">التالي ▶</button>`:''}
+      </div>`;
+  };
+  render();
+  document.body.appendChild(ov);
+  ov.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'&&cur<imgs.length-1){cur++;render();}
+    if(e.key==='ArrowLeft'&&cur>0){cur--;render();}
+    if(e.key==='Escape') ov.remove();
+  });
+  ov.setAttribute('tabindex','0'); ov.focus();
+}
+function closeDet(){ document.getElementById('detOv').classList.remove('on'); curRef=null; }
+function updSt(status){
+  if(!curRef) return;
+  const db=getDB(); const i=db.findIndex(r=>r.ref===curRef);
+  if(i===-1) return;
+  db[i].status=status;
+  db[i].statusLabel=status==='approved'?'معتمد':status==='rejected'?'مرفوض':'قيد المراجعة';
+  db[i].note=document.getElementById('d-note').value;
+  db[i].reviewedBy=CU.name; db[i].reviewDate=new Date().toLocaleDateString('ar-IQ');
+  saveDB(db);
+  addLog('review',`${status==='approved'?'✅ اعتماد':'❌ رفض'} الطلب ${curRef} بواسطة ${CU.name}`, status==='approved'?'#3dab6a':'#e05252');
+  // ── إرسال SMS ──
+  triggerSmsByStatus(db[i], status);
+  closeDet(); loadDash();
+  toast(status==='approved'?'✅ تم الاعتماد':'❌ تم الرفض','s');
+}
+function quickUpd(ref,status){
+  const db=getDB(); const i=db.findIndex(r=>r.ref===ref); if(i===-1) return;
+  db[i].status=status; db[i].statusLabel=status==='approved'?'معتمد':'مرفوض';
+  db[i].reviewedBy=CU.name;
+  saveDB(db); loadDash();
+  // ── إرسال SMS ──
+  triggerSmsByStatus(db[i], status);
+  addLog('review',`${status==='approved'?'✅':'❌'} تحديث سريع للطلب ${ref}`,'#c8a84b');
+  toast(status==='approved'?'✅ اعتماد':'❌ رفض','s');
+}
+
+// ══════════════════════════════════════════════
+//  PRINT / PDF
+// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  PRINT SYSTEM — نظام الطباعة الاحترافي
+// ══════════════════════════════════════════════
+
+let _printRef = null;
+let _printTpl = 'official';
+
+function openPrintModal(ref){
+  const db=getDB(); const r=db.find(x=>x.ref===ref);
+  if(!r){ toast('⚠️ لم يُعثر على المعاملة','e'); return; }
+  _printRef = ref;
+  _printTpl = 'official';
+
+  // إعادة تعيين القوالب
+  document.querySelectorAll('.print-tpl').forEach(t=>t.classList.remove('sel'));
+  document.getElementById('tpl-official').classList.add('sel');
+
+  // ضبط خيار الصور حسب وجودها
+  document.getElementById('popt-images').checked = (r.images||[]).length>0;
+
+  // تحديث المعاينة تلقائياً عند تغيير أي خيار
+  setTimeout(()=>{
+    ['popt-header','popt-images','popt-note','popt-stamp','popt-qr','popt-watermark'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.onchange = refreshPrintPreview;
+    });
+    document.querySelectorAll('input[name=paperSize],input[name=paperOrient]').forEach(el=>{
+      el.onchange = refreshPrintPreview;
+    });
+  }, 100);
+
+  // تحديث المعاينة
+  refreshPrintPreview();
+  document.getElementById('printModalOv').classList.add('on');
+}
+
+function closePrintModal(){
+  document.getElementById('printModalOv').classList.remove('on');
+  _printRef=null;
+}
+
+function selectPrintTpl(tpl, el){
+  _printTpl=tpl;
+  document.querySelectorAll('.print-tpl').forEach(t=>t.classList.remove('sel'));
+  el.classList.add('sel');
+  refreshPrintPreview();
+}
+
+function refreshPrintPreview(){
+  if(!_printRef) return;
+  const html = buildPrintHtml(_printRef, _printTpl, getPrintOpts());
+  document.getElementById('printPreviewInner').innerHTML = html;
+}
+
+function getPrintOpts(){
+  return {
+    header:    document.getElementById('popt-header')?.checked ?? true,
+    images:    document.getElementById('popt-images')?.checked ?? true,
+    note:      document.getElementById('popt-note')?.checked ?? true,
+    stamp:     document.getElementById('popt-stamp')?.checked ?? true,
+    qr:        document.getElementById('popt-qr')?.checked ?? false,
+    watermark: document.getElementById('popt-watermark')?.checked ?? false,
+    paper:     document.querySelector('input[name=paperSize]:checked')?.value || 'A4',
+    orient:    document.querySelector('input[name=paperOrient]:checked')?.value || 'portrait',
+  };
+}
+
+function executePrint(){
+  if(!_printRef) return;
+  const opts = getPrintOpts();
+  const html = buildPrintHtml(_printRef, _printTpl, opts);
+
+  // حقن CSS حجم الورق
+  const paperCss = opts.paper==='A5'
+    ? '@page{size:A5 '+(opts.orient==='landscape'?'landscape':'portrait')+';margin:12mm;}'
+    : opts.paper==='letter'
+    ? '@page{size:letter '+(opts.orient==='landscape'?'landscape':'portrait')+';margin:20mm;}'
+    : '@page{size:A4 '+(opts.orient==='landscape'?'landscape':'portrait')+';margin:18mm;}';
+
+  document.getElementById('printZone').innerHTML = `<style>${paperCss}</style>` + html;
+  closePrintModal();
+  setTimeout(()=>{ window.print(); document.getElementById('printZone').innerHTML=''; }, 350);
+
+  // سجل
+  const db=getDB(); const r=db.find(x=>x.ref===_printRef);
+  addLog('print', `🖨️ طباعة المعاملة ${_printRef} (قالب: ${_printTpl}) بواسطة ${CU.name}`, '#3b82f6');
+}
+
+// ═══════════════════════════════════
+//  مولّد HTML للطباعة
+// ═══════════════════════════════════
+function buildPrintHtml(ref, tpl, opts){
+  const db=getDB(); const r=db.find(x=>x.ref===ref);
+  if(!r) return '';
+  const cfg=getCfg();
+  const sl={pending:'قيد المراجعة',approved:'معتمد',rejected:'مرفوض'};
+  const sc={pending:'#b45309',approved:'#166534',rejected:'#991b1b'};
+  const statusColor = sc[r.status]||'#444';
+
+  const headerHtml = opts.header ? `
+    <div style="text-align:center;padding-bottom:18px;margin-bottom:20px;border-bottom:3px double #c8a84b;position:relative;">
+      ${opts.watermark?`<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:60px;color:rgba(200,168,75,.08);font-weight:900;white-space:nowrap;pointer-events:none;z-index:0;">وثيقة رسمية</div>`:''}
+      <div style="font-size:40px;margin-bottom:6px;">🏛️</div>
+      <div style="font-size:22px;font-weight:900;color:#0d3060;">${cfg.sysName}</div>
+      <div style="font-size:13px;color:#555;margin-top:3px;">${cfg.sysGov} — ${cfg.sysSub||'الجمهورية العراقية'}</div>
+      ${cfg.sysPhone?`<div style="font-size:12px;color:#777;margin-top:2px;">📞 ${cfg.sysPhone}</div>`:''}
+    </div>` : '';
+
+  const refBlock = `
+    <div style="background:linear-gradient(135deg,#fdfaee,#fffef5);border:2px solid #c8a84b;border-radius:10px;padding:14px 18px;text-align:center;margin-bottom:18px;">
+      <div style="font-size:11px;color:#888;letter-spacing:1px;">رقم المعاملة المرجعي</div>
+      <div style="font-size:24px;font-weight:900;color:#0d3060;letter-spacing:2px;">${r.ref}</div>
+      <div style="font-size:12px;color:#555;margin-top:3px;">${r.deptName||''}</div>
+      ${r.clonedFrom?`<div style="font-size:10px;color:#888;margin-top:2px;">(مستنسخ من: ${r.clonedFrom})</div>`:''}
+    </div>`;
+
+  const qrBlock = opts.qr ? `
+    <div style="text-align:center;margin:12px 0;padding:10px;background:#f8f8f8;border-radius:8px;border:1px solid #eee;">
+      <div style="font-family:monospace;font-size:10px;letter-spacing:2px;color:#333;background:white;border:1px solid #ccc;padding:8px 16px;display:inline-block;border-radius:4px;">
+        ▐▌█▐▌▌ ${r.ref} ▐▌█▐▌▌
+      </div>
+      <div style="font-size:9px;color:#aaa;margin-top:4px;">رقم المعاملة للمسح الضوئي</div>
+    </div>` : '';
+
+  const row = (l,v,b=false) => `
+    <tr>
+      <td style="padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;font-weight:700;width:32%;font-size:12px;color:#333;">${l}</td>
+      <td style="padding:8px 12px;border:1px solid #ddd;font-size:12px;color:#111;${b?'font-weight:700;':''}">${v||'—'}</td>
+    </tr>`;
+
+  const stampBlock = opts.stamp ? `
+    <div style="margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:center;">
+      <div style="border-top:1px solid #ccc;padding-top:8px;">
+        <div style="font-size:11px;color:#666;font-weight:700;">توقيع مقدم الطلب</div>
+        <div style="height:35px;"></div>
+      </div>
+      <div style="border-top:1px solid #ccc;padding-top:8px;">
+        <div style="font-size:11px;color:#666;font-weight:700;">توقيع المستلم</div>
+        <div style="height:35px;"></div>
+        <div style="font-size:10px;color:#999;">${r.reviewedBy||'.....................'}</div>
+      </div>
+      <div style="border-top:1px solid #ccc;padding-top:8px;">
+        <div style="font-size:11px;color:#666;font-weight:700;">ختم الدائرة</div>
+        <div style="height:50px;width:50px;border-radius:50%;border:2px dashed #ccc;margin:4px auto;"></div>
+      </div>
+    </div>` : '';
+
+  const footerHtml = `
+    <div style="margin-top:22px;display:flex;justify-content:space-between;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:10px;">
+      <span>📅 طُبع بتاريخ: ${new Date().toLocaleDateString('ar-IQ')} — ${new Date().toLocaleTimeString('ar-IQ')}</span>
+      <span>${cfg.sysName} — نظام إدارة المعاملات</span>
+    </div>`;
+
+  const imgs = (opts.images && (r.images||[]).length>0) ? `
+    <div style="margin-top:18px;page-break-inside:avoid;">
+      <div style="font-weight:700;margin-bottom:10px;color:#0d3060;font-size:12px;border-bottom:1px solid #eee;padding-bottom:5px;">📷 الصور المرفقة (${r.images.length})</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        ${r.images.map((b64,i)=>`
+          <div style="text-align:center;">
+            <img src="${b64}" style="width:130px;height:130px;object-fit:cover;border-radius:7px;border:1px solid #ddd;" />
+            <div style="font-size:9px;color:#999;margin-top:3px;">صورة ${i+1}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
+  const base = `font-family:'Cairo',Arial,sans-serif;direction:rtl;color:#111;`;
+
+  // ─── القوالب ───
+
+  if(tpl === 'official'){
+    return `<div style="${base}padding:24px;max-width:680px;margin:0 auto;">
+      ${headerHtml}
+      ${refBlock}
+      ${qrBlock}
+      <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+        ${row('الاسم الكامل', r.name, true)}
+        ${row('رقم الهاتف', r.phone)}
+        ${row('البريد الإلكتروني', r.email)}
+        ${row('القسم', r.deptName)}
+        ${row('نوع الطلب', r.type)}
+        ${row('تاريخ التقديم', r.date)}
+        ${row('الحالة', `<span style="color:${statusColor};font-weight:700;">${sl[r.status]||r.status}</span>`)}
+        ${r.reviewedBy?row('راجعه', r.reviewedBy+' — '+r.reviewDate):''}
+        <tr><td style="padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;font-weight:700;font-size:12px;color:#333;vertical-align:top;">تفاصيل الطلب</td>
+            <td style="padding:8px 12px;border:1px solid #ddd;font-size:12px;white-space:pre-wrap;">${r.details||'—'}</td></tr>
+        ${opts.note&&r.note?`<tr><td style="padding:8px 12px;background:#fffbeb;border:1px solid #ddd;font-weight:700;font-size:12px;color:#92400e;vertical-align:top;">ملاحظة الموظف</td>
+            <td style="padding:8px 12px;border:1px solid #ddd;background:#fffbeb;font-size:12px;">${r.note}</td></tr>`:''}
+      </table>
+      ${imgs}
+      ${stampBlock}
+      ${footerHtml}
+    </div>`;
+  }
+
+  if(tpl === 'receipt'){
+    return `<div style="${base}padding:20px;max-width:400px;margin:0 auto;border:2px solid #c8a84b;border-radius:12px;">
+      ${headerHtml}
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:15px;font-weight:900;color:#0d3060;">🧾 إيصال استلام طلب</div>
+      </div>
+      ${refBlock}
+      ${qrBlock}
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px;">
+        ${row('الاسم', r.name, true)}
+        ${row('الهاتف', r.phone)}
+        ${row('القسم', r.deptName)}
+        ${row('نوع الطلب', r.type)}
+        ${row('تاريخ الاستلام', r.date)}
+        ${row('الحالة', `<span style="color:${statusColor};font-weight:700;">${sl[r.status]||r.status}</span>`)}
+      </table>
+      <div style="background:#fff8e1;border:1px solid #f59e0b;border-radius:8px;padding:10px;font-size:11px;color:#92400e;text-align:center;margin-bottom:14px;">
+        📌 يُرجى الاحتفاظ بهذا الإيصال ورقم المعاملة لمتابعة طلبك
+      </div>
+      ${stampBlock}
+      ${footerHtml}
+    </div>`;
+  }
+
+  if(tpl === 'internal'){
+    return `<div style="${base}padding:22px;max-width:680px;margin:0 auto;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid #0d3060;">
+        <div>
+          <div style="font-size:13px;font-weight:900;color:#0d3060;text-transform:uppercase;letter-spacing:1px;">مذكرة داخلية</div>
+          <div style="font-size:11px;color:#666;margin-top:3px;">${cfg.sysName} — ${cfg.sysGov}</div>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:22px;font-weight:900;color:#0d3060;">${r.ref}</div>
+          <div style="font-size:11px;color:#888;">${r.date}</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;">
+        <tr style="background:#0d3060;color:white;">
+          <td colspan="2" style="padding:8px 12px;font-weight:700;font-size:13px;">📋 بيانات المعاملة</td>
+        </tr>
+        ${row('مقدم الطلب', r.name, true)}
+        ${row('الهاتف', r.phone)}
+        ${row('القسم', r.deptName)}
+        ${row('نوع الطلب', r.type)}
+        ${row('الحالة', `<span style="color:${statusColor};font-weight:700;">${sl[r.status]||r.status}</span>`)}
+        ${r.reviewedBy?row('المراجع', r.reviewedBy+' — '+r.reviewDate):''}
+        <tr><td style="padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;font-weight:700;font-size:12px;color:#333;vertical-align:top;">التفاصيل</td>
+            <td style="padding:8px 12px;border:1px solid #ddd;font-size:12px;white-space:pre-wrap;">${r.details||'—'}</td></tr>
+        ${opts.note&&r.note?`<tr style="background:#fffbeb;"><td style="padding:8px 12px;border:1px solid #ddd;font-weight:700;font-size:12px;color:#92400e;vertical-align:top;">ملاحظة داخلية</td>
+            <td style="padding:8px 12px;border:1px solid #ddd;font-size:12px;">${r.note}</td></tr>`:''}
+      </table>
+      <div style="margin-top:18px;padding:12px;background:#f0f9ff;border-right:4px solid #0d3060;font-size:11px;color:#333;">
+        <strong>إجراءات مقترحة:</strong><br>
+        ☐ مراجعة الطلب &nbsp;&nbsp; ☐ التحقق من الوثائق &nbsp;&nbsp; ☐ الإحالة للمختص &nbsp;&nbsp; ☐ إشعار المواطن
+      </div>
+      ${stampBlock}
+      ${footerHtml}
+    </div>`;
+  }
+
+  if(tpl === 'summary'){
+    return `<div style="${base}padding:22px;max-width:680px;margin:0 auto;">
+      ${headerHtml}
+      <div style="text-align:center;font-size:16px;font-weight:900;color:#0d3060;margin-bottom:18px;">ملخص معاملة للإدارة</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+        <div style="padding:14px;background:#f0f4ff;border-radius:10px;border-right:4px solid #0d3060;">
+          <div style="font-size:10px;color:#666;font-weight:700;">رقم المعاملة</div>
+          <div style="font-size:18px;font-weight:900;color:#0d3060;">${r.ref}</div>
+        </div>
+        <div style="padding:14px;background:#f0fdf4;border-radius:10px;border-right:4px solid ${statusColor};">
+          <div style="font-size:10px;color:#666;font-weight:700;">الحالة الحالية</div>
+          <div style="font-size:18px;font-weight:900;color:${statusColor};">${sl[r.status]||r.status}</div>
+        </div>
+        <div style="padding:14px;background:#fffbeb;border-radius:10px;border-right:4px solid #c8a84b;">
+          <div style="font-size:10px;color:#666;font-weight:700;">القسم</div>
+          <div style="font-size:14px;font-weight:700;">${r.deptName||'—'}</div>
+        </div>
+        <div style="padding:14px;background:#fdf2f8;border-radius:10px;border-right:4px solid #9333ea;">
+          <div style="font-size:10px;color:#666;font-weight:700;">تاريخ التقديم</div>
+          <div style="font-size:14px;font-weight:700;">${r.date}</div>
+        </div>
+      </div>
+      <div style="background:#f9fafb;padding:14px;border-radius:10px;border:1px solid #e5e7eb;margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;">ملخص الطلب:</div>
+        <div style="font-size:12px;color:#555;line-height:1.7;">${r.details||'—'}</div>
+      </div>
+      ${opts.note&&r.note?`<div style="background:#fffbeb;padding:12px;border-radius:10px;border:1px solid #f59e0b;margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:4px;">ملاحظة:</div>
+        <div style="font-size:12px;color:#78350f;">${r.note}</div>
+      </div>`:''}
+      ${stampBlock}
+      ${footerHtml}
+    </div>`;
+  }
+
+  if(tpl === 'followup'){
+    const steps=[
+      'استلام الطلب وتسجيله','مراجعة الوثائق المرفقة','إحالة للمختص المسؤول',
+      'المعاينة الميدانية (إن لزم)','إعداد التقرير الفني','اتخاذ القرار النهائي','إشعار المواطن بالنتيجة'
+    ];
+    return `<div style="${base}padding:22px;max-width:680px;margin:0 auto;">
+      ${headerHtml}
+      <div style="text-align:center;font-size:15px;font-weight:900;color:#0d3060;margin-bottom:16px;">📞 ورقة متابعة المعاملة</div>
+      ${refBlock}
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px;">
+        ${row('المواطن', r.name, true)}
+        ${row('الهاتف', r.phone)}
+        ${row('القسم', r.deptName)}
+        ${row('نوع الطلب', r.type)}
+        ${row('تاريخ التقديم', r.date)}
+      </table>
+      <div style="font-weight:700;color:#0d3060;font-size:13px;margin-bottom:8px;border-bottom:1px solid #e5e7eb;padding-bottom:5px;">📋 جدول الإجراءات</div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr style="background:#0d3060;color:white;">
+          <th style="padding:7px 10px;text-align:right;">#</th>
+          <th style="padding:7px 10px;text-align:right;">الإجراء</th>
+          <th style="padding:7px 10px;text-align:right;">التاريخ</th>
+          <th style="padding:7px 10px;text-align:right;">المسؤول</th>
+          <th style="padding:7px 10px;text-align:right;">الملاحظة</th>
+        </tr></thead>
+        <tbody>
+          ${steps.map((s,i)=>`<tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:8px 10px;font-weight:700;color:#888;">${i+1}</td>
+            <td style="padding:8px 10px;">${s}</td>
+            <td style="padding:8px 10px;width:80px;border-bottom:1px dashed #ccc;">&nbsp;</td>
+            <td style="padding:8px 10px;width:90px;border-bottom:1px dashed #ccc;">&nbsp;</td>
+            <td style="padding:8px 10px;width:110px;border-bottom:1px dashed #ccc;">&nbsp;</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      ${stampBlock}
+      ${footerHtml}
+    </div>`;
+  }
+
+  if(tpl === 'archive'){
+    // A5 مضغوطة
+    return `<div style="${base}padding:16px;max-width:500px;margin:0 auto;border:2px solid #0d3060;border-radius:8px;font-size:11px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid #c8a84b;">
+        <div>
+          <div style="font-size:9px;color:#888;font-weight:700;letter-spacing:1px;">بطاقة أرشفة</div>
+          <div style="font-size:11px;font-weight:900;color:#0d3060;">${cfg.sysName}</div>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:16px;font-weight:900;color:#0d3060;">${r.ref}</div>
+          <div style="font-size:9px;color:#888;">${r.date}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;margin-bottom:10px;">
+        <div><span style="color:#666;font-weight:700;">الاسم: </span>${r.name}</div>
+        <div><span style="color:#666;font-weight:700;">الهاتف: </span>${r.phone}</div>
+        <div><span style="color:#666;font-weight:700;">القسم: </span>${r.deptName||'—'}</div>
+        <div><span style="color:#666;font-weight:700;">النوع: </span>${r.type||'—'}</div>
+        <div><span style="color:#666;font-weight:700;">الحالة: </span><strong style="color:${statusColor};">${sl[r.status]||r.status}</strong></div>
+        <div><span style="color:#666;font-weight:700;">المراجع: </span>${r.reviewedBy||'—'}</div>
+      </div>
+      ${r.details?`<div style="background:#f9fafb;padding:7px;border-radius:6px;font-size:10px;color:#444;margin-bottom:8px;max-height:50px;overflow:hidden;">${r.details}</div>`:''}
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#aaa;border-top:1px solid #eee;padding-top:7px;margin-top:4px;">
+        <span>طُبع: ${new Date().toLocaleDateString('ar-IQ')}</span>
+        <span>${cfg.sysGov}</span>
+      </div>
+    </div>`;
+  }
+
+  return `<div style="${base}padding:20px;">محتوى غير متاح</div>`;
+}
+
+// وظائف الطباعة القديمة للتوافق
+function printSingle(ref){ openPrintModal(ref); }
+function printOne(){ if(curRef) openPrintModal(curRef); }
+
+function printTbl(){
+  const cfg=getCfg();
+  const data=getDB().filter(r=>!r.archived).reverse();
+  const rows=data.map((r,i)=>`<tr style="border-bottom:1px solid #eee;">
+    <td style="padding:7px;">${i+1}</td>
+    <td style="padding:7px;font-weight:700;color:#0d3060;">${r.ref}</td>
+    <td style="padding:7px;">${r.deptName||''}</td>
+    <td style="padding:7px;">${r.name}</td>
+    <td style="padding:7px;">${r.phone}</td>
+    <td style="padding:7px;">${r.date}</td>
+    <td style="padding:7px;font-weight:700;color:${{pending:'#b45309',approved:'#166534',rejected:'#991b1b'}[r.status]||'#444'};">
+      ${{pending:'قيد المراجعة',approved:'معتمد',rejected:'مرفوض'}[r.status]||''}
+    </td>
+    <td style="padding:7px;text-align:center;">${(r.imageCount||0)>0?'📷 '+r.imageCount:'—'}</td>
+  </tr>`).join('');
+  document.getElementById('printZone').innerHTML=`
+    <style>@page{size:A4 landscape;margin:15mm;}</style>
+    <div style="font-family:'Cairo',Arial;direction:rtl;padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:3px double #c8a84b;padding-bottom:12px;">
+        <div>
+          <div style="font-size:18px;font-weight:900;color:#0d3060;">🏛️ ${cfg.sysName}</div>
+          <div style="font-size:11px;color:#666;">${cfg.sysGov} — ${cfg.sysSub||''}</div>
+        </div>
+        <div style="text-align:left;font-size:11px;color:#888;">
+          <div>تقرير الطلبات الكامل</div>
+          <div>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-IQ')}</div>
+          <div>عدد الطلبات: ${data.length}</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr style="background:#0d3060;color:white;">
+          <th style="padding:8px;">#</th>
+          <th style="padding:8px;">رقم الطلب</th>
+          <th style="padding:8px;">القسم</th>
+          <th style="padding:8px;">مقدم الطلب</th>
+          <th style="padding:8px;">الهاتف</th>
+          <th style="padding:8px;">التاريخ</th>
+          <th style="padding:8px;">الحالة</th>
+          <th style="padding:8px;">صور</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div style="margin-top:14px;font-size:10px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:8px;">
+        ${cfg.sysName} — نظام إدارة المعاملات — طُبع بتاريخ ${new Date().toLocaleDateString('ar-IQ')}
+      </div>
+    </div>`;
+  addLog('print', `🖨️ طباعة قائمة الطلبات (${data.length}) بواسطة ${CU.name}`, '#3b82f6');
+  setTimeout(()=>{ window.print(); document.getElementById('printZone').innerHTML=''; }, 350);
+}
+
+
+// ══════════════════════════════════════════════
+//  REPORTS
+// ══════════════════════════════════════════════
+function renderReports(){
+  const data=getDB().filter(r=>!r.archived);
+  const depts=getDepts();
+  const ids=depts.map(d=>d.id);
+  const lbls=depts.map(d=>d.name);
+  const cols=ids.map(id=>(deptMeta[id]||{color:'#888'}).color);
+  const cnts=ids.map(id=>data.filter(r=>r.dept===id).length);
+  const pcts=ids.map(id=>{
+    const t=data.filter(r=>r.dept===id).length;
+    const done=data.filter(r=>r.dept===id&&r.status!=='pending').length;
+    return t>0?Math.round(done/t*100):0;
+  });
+  const co={plugins:{legend:{labels:{color:'rgba(255,255,255,.65)',font:{family:'Cairo',size:10}}}}};
+
+  const rd=document.getElementById('rDept').getContext('2d');
+  if(chRDept) chRDept.destroy();
+  chRDept=new Chart(rd,{type:'bar',data:{labels:lbls,datasets:[{data:cnts,backgroundColor:cols.map(c=>c+'88'),borderColor:cols,borderWidth:2,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,...co,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'rgba(255,255,255,.5)',font:{family:'Cairo',size:9}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'rgba(255,255,255,.5)'},grid:{color:'rgba(255,255,255,.04)'}}}}});
+
+  const rr=document.getElementById('rRadar').getContext('2d');
+  if(chRadar) chRadar.destroy();
+  chRadar=new Chart(rr,{type:'radar',data:{labels:lbls,datasets:[{label:'نسبة الإنجاز %',data:pcts,borderColor:'#c8a84b',backgroundColor:'rgba(200,168,75,.1)',pointBackgroundColor:'#c8a84b',pointRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{r:{ticks:{color:'rgba(255,255,255,.4)',backdropColor:'transparent'},grid:{color:'rgba(255,255,255,.07)'},pointLabels:{color:'rgba(255,255,255,.65)',font:{family:'Cairo',size:10}}}},
+      plugins:{legend:{labels:{color:'rgba(255,255,255,.65)'}}}}});
+
+  document.getElementById('repTbody').innerHTML=depts.map(d=>{
+    const t=data.filter(r=>r.dept===d.id).length;
+    const p=data.filter(r=>r.dept===d.id&&r.status==='pending').length;
+    const a=data.filter(r=>r.dept===d.id&&r.status==='approved').length;
+    const rj=data.filter(r=>r.dept===d.id&&r.status==='rejected').length;
+    const pct=t>0?Math.round((a+rj)/t*100):0;
+    return `<tr>
+      <td style="font-weight:700;color:var(--shine);">${d.icon} ${d.name}</td>
+      <td>${t}</td><td style="color:var(--orange);">${p}</td>
+      <td style="color:var(--green);">${a}</td><td style="color:var(--red);">${rj}</td>
+      <td><div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;height:5px;background:rgba(255,255,255,.09);border-radius:3px;">
+          <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--gold),var(--shine));border-radius:3px;"></div>
+        </div>
+        <span style="font-size:11px;color:var(--shine);font-weight:700;">${pct}%</span>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+function printReport(){
+  const cfg=getCfg();
+  document.getElementById('printZone').innerHTML=`
+    <div style="font-family:Cairo,Arial;direction:rtl;padding:20px;">
+      <h2 style="color:#0d3060;">📊 تقرير إحصائي — ${cfg.sysName} | ${cfg.sysGov}</h2>
+      <p style="font-size:11px;color:#888;">تاريخ: ${new Date().toLocaleDateString('ar-IQ')}</p>
+      ${document.getElementById('repTbody').closest('table').outerHTML}
+    </div>`;
+  setTimeout(()=>window.print(),300);
+}
+
+// ══════════════════════════════════════════════
+//  SETTINGS PANEL
+// ══════════════════════════════════════════════
+function renderSettings(){
+  if(!CU||!CU.perms.includes('settings')) return;
+  const cfg=getCfg();
+  document.getElementById('cfg-name').value = cfg.sysName||DEFAULT_CFG.sysName;
+  document.getElementById('cfg-gov').value  = cfg.sysGov||DEFAULT_CFG.sysGov;
+  document.getElementById('cfg-sub').value  = cfg.sysSub||DEFAULT_CFG.sysSub;
+  document.getElementById('cfg-phone').value= cfg.sysPhone||'';
+  document.getElementById('cfg-session').value  = cfg.sessionMinutes||30;
+  document.getElementById('cfg-attempts').value = cfg.maxAttempts||5;
+  document.getElementById('cfg-locktime').value = cfg.lockSeconds||60;
+  renderDeptManager();
+  renderSmsSettings();
+}
+function saveSysInfo(){
+  const cfg=getCfg();
+  cfg.sysName  = document.getElementById('cfg-name').value.trim()||DEFAULT_CFG.sysName;
+  cfg.sysGov   = document.getElementById('cfg-gov').value.trim()||DEFAULT_CFG.sysGov;
+  cfg.sysSub   = document.getElementById('cfg-sub').value.trim()||DEFAULT_CFG.sysSub;
+  cfg.sysPhone = document.getElementById('cfg-phone').value.trim();
+  saveCfg(cfg); applySystemName();
+  addLog('settings','⚙️ تم تعديل معلومات النظام بواسطة '+CU.name,'#c8a84b');
+  toast('✅ تم حفظ معلومات النظام','s');
+}
+function saveSecSettings(){
+  const cfg=getCfg();
+  cfg.sessionMinutes = parseInt(document.getElementById('cfg-session').value)||30;
+  cfg.maxAttempts    = parseInt(document.getElementById('cfg-attempts').value)||5;
+  cfg.lockSeconds    = parseInt(document.getElementById('cfg-locktime').value)||60;
+  saveCfg(cfg);
+  addLog('settings','🔐 تم تعديل إعدادات الأمان بواسطة '+CU.name,'#c8a84b');
+  toast('✅ تم حفظ إعدادات الأمان','s');
+}
+function renderDeptManager(){
+  const depts=getDepts();
+  document.getElementById('deptManager').innerHTML=depts.map((d,i)=>`
+    <div class="dept-row">
+      <div class="di">${d.icon}</div>
+      <div class="dn"><h4>${d.name}</h4><p>ID: ${d.id}</p></div>
+      <label class="toggle-sw">
+        <input type="checkbox" ${d.active?'checked':''} onchange="toggleDept(${i},this.checked)" />
+        <span class="toggle-sl"></span>
+      </label>
+    </div>`).join('');
+}
+function toggleDept(idx,val){
+  const depts=getDepts(); depts[idx].active=val; saveDepts(depts);
+  addLog('settings',`${val?'✅ تفعيل':'⛔ إيقاف'} قسم: ${depts[idx].name}`,'#c8a84b');
+  toast(val?'✅ تم تفعيل القسم':'⛔ تم إيقاف القسم','s');
+}
+function confirmClearAll(){
+  if(confirm('⚠️ هل أنت متأكد من مسح جميع الطلبات؟\nهذا الإجراء لا يمكن التراجع عنه!')){
+    localStorage.removeItem('govReqs');
+    addLog('danger','🗑️ تم مسح جميع الطلبات بواسطة '+CU.name,'#e05252');
+    loadDash(); toast('🗑️ تم مسح جميع الطلبات','e');
+  }
+}
+function resetSysSettings(){
+  if(confirm('⚠️ إعادة ضبط جميع إعدادات النظام؟')){
+    localStorage.removeItem('govCfg'); localStorage.removeItem('govDepts');
+    applySystemName(); renderSettings();
+    addLog('settings','↩ إعادة ضبط الإعدادات بواسطة '+CU.name,'#f59e0b');
+    toast('↩ تم إعادة الضبط','i');
+  }
+}
+
+// ══════════════════════════════════════════════
+//  USERS MANAGEMENT
+// ══════════════════════════════════════════════
+function renderUsers(){
+  if(!CU||!CU.perms.includes('users')) return;
+  const users=getUsers();
+  const roleColors={admin:'rgba(200,168,75,.1)',supervisor:'rgba(59,130,246,.1)',employee:'rgba(61,171,106,.1)'};
+  const roleText={admin:'var(--shine)',supervisor:'#93c5fd',employee:'#6ee7b7'};
+  const roleLabels={admin:'مدير',supervisor:'مشرف',employee:'موظف'};
+  const permLabels={view:'عرض',approve:'اعتماد',reject:'رفض',archive:'أرشفة',export:'تصدير',print:'طباعة',settings:'الإعدادات',users:'المستخدمين'};
+  document.getElementById('usersList').innerHTML = Object.entries(users).map(([key,u])=>`
+    <div class="uc">
+      <div class="uc-top">
+        <div class="uc-av" style="background:${roleColors[u.role]||'rgba(255,255,255,.07)'};">${u.initial||u.name[0]}</div>
+        <div class="uc-info">
+          <h4>${u.name}</h4>
+          <p style="color:${roleText[u.role]||'var(--muted)'};">${roleLabels[u.role]||u.role} — <code style="opacity:.7;font-size:10px;">${key}</code></p>
+          <p style="color:${u.active!==false?'#3dab6a':'#e05252'};font-size:11px;">${u.active!==false?'● نشط':'● موقوف'}</p>
+        </div>
+      </div>
+      <div class="uc-perms">${(u.perms||[]).map(p=>`<span class="perm">✓ ${permLabels[p]||p}</span>`).join('')}</div>
+      <div class="uc-actions">
+        <button class="ab ab-e" onclick="openEditUser('${key}')">✏️ تعديل</button>
+        ${key!=='admin'?`<button class="ab ab-a" onclick="toggleUserActive('${key}')">${u.active!==false?'⛔ تعليق':'✅ تفعيل'}</button>`:''}
+        ${key!=='admin'?`<button class="ab ab-d" onclick="deleteUser('${key}')">🗑️ حذف</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function openAddUser(){
+  document.getElementById('userModalTitle').textContent='➕ إضافة مستخدم جديد';
+  document.getElementById('editUserKey').value='';
+  document.getElementById('nu-user').value='';
+  document.getElementById('nu-name').value='';
+  document.getElementById('nu-pass').value='';
+  document.getElementById('nu-role').value='employee';
+  document.getElementById('nu-user').disabled=false;
+  document.getElementById('pwEditHint').style.display='none';
+  updatePermsByRole();
+  document.getElementById('pwBar').style.width='0';
+  document.getElementById('pwLabel').textContent='';
+  document.getElementById('userOv').classList.add('on');
+}
+function openEditUser(key){
+  const users=getUsers(); const u=users[key]; if(!u) return;
+  document.getElementById('userModalTitle').textContent='✏️ تعديل المستخدم: '+u.name;
+  document.getElementById('editUserKey').value=key;
+  document.getElementById('nu-user').value=key;
+  document.getElementById('nu-user').disabled=true;
+  document.getElementById('nu-name').value=u.name;
+  document.getElementById('nu-pass').value='';
+  document.getElementById('nu-role').value=u.role;
+  document.getElementById('pwEditHint').style.display='inline';
+  // restore perms checkboxes
+  updatePermsByRole();
+  setTimeout(()=>{
+    (u.perms||[]).forEach(p=>{
+      const cb=document.getElementById('perm-'+p);
+      if(cb) cb.checked=true;
+    });
+  },50);
+  document.getElementById('userOv').classList.add('on');
+}
+function closeUserModal(){ document.getElementById('userOv').classList.remove('on'); }
+
+function updatePermsByRole(){
+  const role=document.getElementById('nu-role').value;
+  const defaultPerms=ROLE_PERMS[role]||[];
+  const permLabels={view:'عرض الطلبات',approve:'اعتماد',reject:'رفض',archive:'أرشفة',export:'تصدير',print:'طباعة',settings:'الإعدادات',users:'إدارة المستخدمين'};
+  document.getElementById('permsGrid').innerHTML=PERM_LIST.map(p=>`
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.7);">
+      <input type="checkbox" id="perm-${p.k}" ${defaultPerms.includes(p.k)?'checked':''} style="cursor:pointer;" />
+      ${permLabels[p.k]||p.k}
+    </label>`).join('');
+}
+
+async function saveUser(){
+  const key=document.getElementById('editUserKey').value;
+  const username=(document.getElementById('nu-user').value||'').trim().toLowerCase().replace(/\s/g,'');
+  const name=(document.getElementById('nu-name').value||'').trim();
+  const pass=document.getElementById('nu-pass').value;
+  const role=document.getElementById('nu-role').value;
+  const perms=PERM_LIST.map(p=>p.k).filter(k=>{const cb=document.getElementById('perm-'+k);return cb&&cb.checked;});
+
+  if(!username||!name){ toast('⚠️ اسم المستخدم والاسم الكامل مطلوبان','e'); return; }
+
+  const users=getUsers();
+  const isEdit=!!key;
+
+  if(!isEdit&&users[username]){ toast('⚠️ اسم المستخدم موجود مسبقاً','e'); return; }
+  if(!isEdit&&!pass){ toast('⚠️ كلمة المرور مطلوبة للمستخدم الجديد','e'); return; }
+
+  let passHash = isEdit ? (users[key]?.passHash||'') : '';
+  if(pass){
+    if(pass.length<6){ toast('⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل','e'); return; }
+    passHash = await hashPw(pass);
+  }
+
+  const userData={name, role, passHash, perms, initial:name[0]||'م', active:true};
+  const saveKey = isEdit ? key : username;
+  users[saveKey]={...users[saveKey],...userData};
+  saveUsers(users);
+
+  addLog('users',`${isEdit?'✏️ تعديل':'➕ إضافة'} المستخدم: ${name} (${saveKey}) بواسطة ${CU.name}`,'#9333ea');
+  closeUserModal(); renderUsers();
+  toast(isEdit?'✅ تم تعديل المستخدم':'✅ تم إضافة المستخدم','s');
+}
+
+function toggleUserActive(key){
+  const users=getUsers(); if(!users[key]) return;
+  users[key].active = !(users[key].active!==false);
+  saveUsers(users);
+  addLog('users',`${users[key].active?'✅ تفعيل':'⛔ تعليق'} المستخدم: ${users[key].name} بواسطة ${CU.name}`, users[key].active?'#3dab6a':'#e05252');
+  renderUsers(); toast(users[key].active?'✅ تم التفعيل':'⛔ تم التعليق','s');
+}
+function deleteUser(key){
+  if(!confirm('هل تريد حذف هذا المستخدم نهائياً؟')) return;
+  const users=getUsers();
+  const name=users[key]?.name||key;
+  delete users[key]; saveUsers(users);
+  addLog('users',`🗑️ حذف المستخدم: ${name} بواسطة ${CU.name}`,'#e05252');
+  renderUsers(); toast('🗑️ تم حذف المستخدم','e');
+}
+
+// Password strength checker
+function checkPwStrength(){
+  const pw=document.getElementById('nu-pass').value;
+  const bar=document.getElementById('pwBar');
+  const lbl=document.getElementById('pwLabel');
+  if(!pw){ bar.style.width='0'; lbl.textContent=''; return; }
+  let score=0;
+  if(pw.length>=8) score++;
+  if(/[A-Z]/.test(pw)) score++;
+  if(/[0-9]/.test(pw)) score++;
+  if(/[^A-Za-z0-9]/.test(pw)) score++;
+  if(pw.length>=12) score++;
+  const levels=[{w:'20%',c:'#e05252',l:'ضعيفة'},{ w:'40%',c:'#f59e0b',l:'مقبولة'},{w:'60%',c:'#eab308',l:'متوسطة'},{w:'80%',c:'#84cc16',l:'جيدة'},{w:'100%',c:'#3dab6a',l:'قوية جداً'}];
+  const lvl=levels[Math.min(score-1,4)]||levels[0];
+  bar.style.width=lvl.w; bar.style.background=lvl.c;
+  lbl.textContent='قوة كلمة المرور: '+lvl.l; lbl.style.color=lvl.c;
+}
+
+// ══════════════════════════════════════════════
+//  LOGS
+// ══════════════════════════════════════════════
+function getLogs(){ try{return JSON.parse(localStorage.getItem('govLogs')||'[]');}catch(e){return[];} }
+function saveLogs(l){ localStorage.setItem('govLogs',JSON.stringify(l.slice(-500))); }
+function addLog(type, msg, color='#c8a84b'){
+  const logs=getLogs();
+  logs.push({type,msg,color,time:new Date().toLocaleString('ar-IQ')});
+  saveLogs(logs);
+}
+function renderLogs(){
+  const logs=getLogs().reverse();
+  const c=document.getElementById('logsContainer');
+  if(!logs.length){ c.innerHTML=`<div class="empty"><div class="ei">📜</div><p>لا توجد أحداث مسجلة</p></div>`; return; }
+  c.innerHTML=logs.map(l=>`
+    <div class="log-entry">
+      <div class="log-dot" style="background:${l.color};"></div>
+      <div class="log-text">${l.msg}</div>
+      <div class="log-time">${l.time}</div>
+    </div>`).join('');
+}
+function clearLogs(){
+  if(!confirm('مسح جميع سجلات الأحداث؟')) return;
+  localStorage.removeItem('govLogs');
+  renderLogs(); toast('🗑️ تم مسح السجل','i');
+}
+
+// ══════════════════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════════════════
+function exportCSV(archOnly=false){
+  const data=archOnly?getDB().filter(r=>r.archived):getDB().filter(r=>!r.archived);
+  if(!data.length){ toast('لا توجد بيانات','e'); return; }
+  const h=['رقم الطلب','القسم','الاسم','الهاتف','البريد','نوع الطلب','التاريخ','الحالة','ملاحظة'];
+  const rows=data.map(r=>[r.ref,r.deptName||'',r.name,r.phone,r.email||'',r.type||'',r.date,r.statusLabel||r.status,r.note||''].map(v=>`"${v}"`).join(','));
+  const csv='\uFEFF'+[h.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`requests_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('📥 تم التصدير','s');
+}
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function setText(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+function toggleEye(){
+  const i=document.getElementById('loginP');
+  i.type=i.type==='password'?'text':'password';
+}
+function toggleNewPw(){
+  const i=document.getElementById('nu-pass');
+  i.type=i.type==='password'?'text':'password';
+}
+function toast(msg, type='s'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='toast toast-'+type+' on';
+  setTimeout(()=>el.classList.remove('on'),3200);
+}
+
+// ── shake animation ──
+const st=document.createElement('style');
+st.textContent='@keyframes shake{0%,100%{transform:none}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}';
+document.head.appendChild(st);
+
+
+// ══════════════════════════════════════════════
+//  SMS SYSTEM — FULL
+// ══════════════════════════════════════════════
+
+const SMS_LOG_KEY = 'govSmsLog';
+const SMS_CFG_KEY = 'govSmsCfg';
+
+function getSmsLog(){ try{return JSON.parse(localStorage.getItem(SMS_LOG_KEY)||'[]');}catch(e){return[];} }
+function saveSmsLog(l){ localStorage.setItem(SMS_LOG_KEY, JSON.stringify(l.slice(-100))); }
+
+function getSmsCfg(){
+  try{
+    return JSON.parse(localStorage.getItem(SMS_CFG_KEY)||'{}');
+  }catch(e){ return {}; }
+}
+function saveSmsCfg(c){ localStorage.setItem(SMS_CFG_KEY, JSON.stringify(c)); }
+
+// تحديد المزود
+function selectProvider(p, el){
+  document.querySelectorAll('.prov-tab').forEach(t=>t.classList.remove('act'));
+  if(el) el.classList.add('act');
+  ['twilio','vonage','custom'].forEach(x=>{
+    const f=document.getElementById('fields-'+x);
+    if(f) f.style.display = x===p ? '' : 'none';
+  });
+}
+
+// تحميل إعدادات SMS في الواجهة
+function renderSmsSettings(){
+  const c = getSmsCfg();
+  // المزود
+  const prov = c.provider || 'twilio';
+  selectProvider(prov);
+  document.querySelectorAll('.prov-tab').forEach((t,i)=>{
+    const map=['twilio','vonage','custom'];
+    if(map[i]===prov) t.classList.add('act'); else t.classList.remove('act');
+  });
+  // Twilio
+  if(c.twilio){
+    const el=document.getElementById('sms-twilio-sid'); if(el) el.value=c.twilio.sid||'';
+    const el2=document.getElementById('sms-twilio-token'); if(el2) el2.value=c.twilio.token||'';
+    const el3=document.getElementById('sms-twilio-from'); if(el3) el3.value=c.twilio.from||'';
+  }
+  // Vonage
+  if(c.vonage){
+    const el=document.getElementById('sms-vonage-key'); if(el) el.value=c.vonage.key||'';
+    const el2=document.getElementById('sms-vonage-secret'); if(el2) el2.value=c.vonage.secret||'';
+    const el3=document.getElementById('sms-vonage-from'); if(el3) el3.value=c.vonage.from||'Vonage APIs';
+    const el4=document.getElementById('sms-vonage-testphone'); if(el4) el4.value=c.vonage.testphone||'';
+  }
+  // Custom
+  if(c.custom){
+    const el=document.getElementById('sms-custom-url'); if(el) el.value=c.custom.url||'';
+    const el2=document.getElementById('sms-custom-key'); if(el2) el2.value=c.custom.key||'';
+    const el3=document.getElementById('sms-custom-msgfield'); if(el3) el3.value=c.custom.msgfield||'message';
+    const el4=document.getElementById('sms-custom-phonefield'); if(el4) el4.value=c.custom.phonefield||'to';
+  }
+  // Messages
+  const ma=document.getElementById('sms-msg-approved');
+  const mr=document.getElementById('sms-msg-rejected');
+  if(ma) ma.value = c.msgApproved || 'عزيزي {name}، تم اعتماد طلبك رقم {ref} في {dept} - {org}. للاستفسار تواصل معنا.';
+  if(mr) mr.value = c.msgRejected || 'عزيزي {name}، نأسف لإبلاغك برفض طلبك رقم {ref} في {dept}. يرجى مراجعة الدائرة للاستفسار.';
+  // Checkboxes
+  const chk1=document.getElementById('sms-enabled');
+  const chk2=document.getElementById('sms-on-approve');
+  const chk3=document.getElementById('sms-on-reject');
+  if(chk1) chk1.checked = c.enabled===true;
+  if(chk2) chk2.checked = c.onApprove!==false;
+  if(chk3) chk3.checked = c.onReject===true;
+
+  renderSmsLog();
+  updateSmsStatusBar();
+}
+
+function saveSmsSettings(){
+  const prov = document.querySelector('.prov-tab.act')?.dataset?.prov ||
+    (['twilio','vonage','custom'].find(p => document.getElementById('fields-'+p)?.style.display !== 'none') || 'twilio');
+  const c = getSmsCfg();
+  c.provider = prov;
+  c.enabled  = document.getElementById('sms-enabled').checked;
+  c.onApprove= document.getElementById('sms-on-approve').checked;
+  c.onReject = document.getElementById('sms-on-reject').checked;
+  c.msgApproved = document.getElementById('sms-msg-approved').value.trim();
+  c.msgRejected = document.getElementById('sms-msg-rejected').value.trim();
+  if(prov==='twilio'){
+    c.twilio = {
+      sid:   document.getElementById('sms-twilio-sid').value.trim(),
+      token: document.getElementById('sms-twilio-token').value.trim(),
+      from:  document.getElementById('sms-twilio-from').value.trim(),
+    };
+  } else if(prov==='vonage'){
+    c.vonage = {
+      key:       document.getElementById('sms-vonage-key').value.trim(),
+      secret:    document.getElementById('sms-vonage-secret').value.trim(),
+      from:      document.getElementById('sms-vonage-from').value.trim()||'Vonage APIs',
+      testphone: document.getElementById('sms-vonage-testphone')?.value.trim()||'',
+    };
+  } else if(prov==='custom'){
+    c.custom = {
+      url:        document.getElementById('sms-custom-url').value.trim(),
+      key:        document.getElementById('sms-custom-key').value.trim(),
+      msgfield:   document.getElementById('sms-custom-msgfield').value.trim()||'message',
+      phonefield: document.getElementById('sms-custom-phonefield').value.trim()||'to',
+    };
+  }
+  saveSmsCfg(c);
+  addLog('settings','📲 تم حفظ إعدادات SMS بواسطة '+CU.name,'#3b82f6');
+  toast('✅ تم حفظ إعدادات SMS','s');
+  updateSmsStatusBar();
+}
+
+function updateSmsStatusBar(){
+  const c = getSmsCfg();
+  const bar = document.getElementById('smsStatusBar');
+  if(!bar) return;
+  if(!c.enabled){
+    bar.innerHTML=`<div class="sms-status sms-warn">⚠️ نظام SMS غير مفعّل — فعّله من الإعدادات أعلاه</div>`;
+    return;
+  }
+  const prov = c.provider||'twilio';
+  let configured = false;
+  if(prov==='twilio'   && c.twilio?.sid   && c.twilio?.token && c.twilio?.from)  configured=true;
+  if(prov==='vonage'   && c.vonage?.key   && c.vonage?.secret)                   configured=true;
+  if(prov==='custom'   && c.custom?.url   && c.custom?.key)                      configured=true;
+  if(configured){
+    bar.innerHTML=`<div class="sms-status sms-ok">✅ نظام SMS مفعّل ويعمل — المزود: ${prov}</div>`;
+  } else {
+    bar.innerHTML=`<div class="sms-status sms-err">❌ بيانات المزود غير مكتملة — أدخل بيانات ${prov} ثم احفظ</div>`;
+  }
+}
+
+// ── الدالة الرئيسية لإرسال SMS ──
+async function sendSms(phone, message, reqRef='', citizenName=''){
+  const c = getSmsCfg();
+  if(!c.enabled) return {ok:false, msg:'SMS غير مفعّل'};
+  // تنظيف رقم الهاتف
+  let to = phone.replace(/\s/g,'').replace(/^00/,'+');
+  if(!to.startsWith('+')) to = '+964' + to.replace(/^0/,''); // العراق افتراضي
+  const prov = c.provider||'twilio';
+  let result;
+  try{
+    if(prov==='twilio')       result = await sendViaTwilio(to, message, c.twilio);
+    else if(prov==='vonage')  result = await sendViaVonage(to, message, c.vonage);
+    else if(prov==='custom')  result = await sendViaCustom(to, message, c.custom);
+    else result = {ok:false, msg:'مزود غير معروف'};
+  }catch(err){
+    result = {ok:false, msg: err.message||'خطأ في الإرسال'};
+  }
+  // سجّل النتيجة
+  const log = getSmsLog();
+  log.unshift({
+    to, message: message.substring(0,60)+'...',
+    ref: reqRef, name: citizenName,
+    ok: result.ok, msg: result.msg||'',
+    time: new Date().toLocaleString('ar-IQ'),
+    prov
+  });
+  saveSmsLog(log);
+  addLog('sms', `${result.ok?'📲 تم إرسال SMS':'❌ فشل SMS'} إلى ${to} ${reqRef?'('+reqRef+')':''}`, result.ok?'#3dab6a':'#e05252');
+  return result;
+}
+
+// ── Twilio (CORS Proxy needed for browser) ──
+async function sendViaTwilio(to, body, cfg){
+  if(!cfg?.sid||!cfg?.token||!cfg?.from) return {ok:false, msg:'بيانات Twilio ناقصة'};
+  // Twilio يحتاج proxy من server لأن CORS محظور من المتصفح مباشرة
+  // نستخدم Twilio Edge Function أو allorigins proxy
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${cfg.sid}/Messages.json`;
+  const params = new URLSearchParams({ To:to, From:cfg.from, Body:body });
+  const auth = btoa(`${cfg.sid}:${cfg.token}`);
+  try{
+    const resp = await fetch(url, {
+      method:'POST',
+      headers:{
+        'Authorization': 'Basic '+auth,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString()
+    });
+    const data = await resp.json();
+    if(resp.ok && data.sid){
+      return {ok:true, msg:'SID: '+data.sid};
+    } else {
+      return {ok:false, msg: data.message||data.code||'فشل Twilio'};
+    }
+  }catch(e){
+    // CORS error — يعمل عند التشغيل على server، لا يعمل من متصفح مباشرة
+    if(e.message?.includes('CORS')||e.message?.includes('fetch')){
+      return {ok:false, msg:'خطأ CORS: ارفع النظام على server (Netlify/VPS) لتعمل Twilio'};
+    }
+    return {ok:false, msg:e.message};
+  }
+}
+
+// ── Vonage — JavaScript equivalent of Java SDK:
+//    new TextMessage(from, to, text)  →  POST /sms/json
+//    MessageStatus.OK                 →  messages[0].status === "0"
+//    getErrorText()                   →  messages[0]['error-text']
+// ────────────────────────────────────────────────
+async function sendViaVonage(to, text, cfg){
+  if(!cfg?.key||!cfg?.secret) return {ok:false, msg:'بيانات Vonage ناقصة (API Key و Secret مطلوبان)'};
+
+  // يُطابق Java: new TextMessage("Vonage APIs", to, text)
+  const from = cfg.from || 'Vonage APIs';
+
+  // يُطابق Java: client.getSmsClient().submitMessage(message)
+  //              → POST https://rest.nexmo.com/sms/json
+  let resp, data;
+  try{
+    resp = await fetch('https://rest.nexmo.com/sms/json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key:    cfg.key,
+        api_secret: cfg.secret,
+        to:         to,       // "9647833331112"
+        from:       from,     // "Vonage APIs"
+        text:       text      // نص الرسالة
+      })
+    });
+    data = await resp.json();
+  } catch(e){
+    return {ok:false, msg:'خطأ في الاتصال بـ Vonage: ' + e.message};
+  }
+
+  // يُطابق Java:
+  //   if (response.getMessages().get(0).getStatus() == MessageStatus.OK)
+  //       → "Message sent successfully."
+  //   else
+  //       → "Message failed with error: " + getErrorText()
+  const firstMsg = data?.messages?.[0];
+  if(!firstMsg) return {ok:false, msg:'استجابة غير متوقعة من Vonage'};
+
+  if(firstMsg.status === '0'){
+    // MessageStatus.OK — Message sent successfully.
+    return {
+      ok: true,
+      msg: `Message sent successfully. (ID: ${firstMsg['message-id']||'—'}, To: ${to})`
+    };
+  } else {
+    // Message failed with error: getErrorText()
+    return {
+      ok: false,
+      msg: `Message failed with error: ${firstMsg['error-text'] || 'Error code ' + firstMsg.status}`
+    };
+  }
+}
+
+// ── Custom API ──
+async function sendViaCustom(to, message, cfg){
+  if(!cfg?.url||!cfg?.key) return {ok:false, msg:'بيانات API ناقصة'};
+  try{
+    const body = {};
+    body[cfg.phonefield||'to'] = to;
+    body[cfg.msgfield||'message'] = message;
+    const resp = await fetch(cfg.url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+      body: JSON.stringify(body)
+    });
+    if(resp.ok) return {ok:true, msg:'تم الإرسال'};
+    return {ok:false, msg:`HTTP ${resp.status}`};
+  }catch(e){ return {ok:false, msg:e.message}; }
+}
+
+// ── بناء نص الرسالة ──
+function buildSmsText(template, req){
+  const cfg = getCfg();
+  return template
+    .replace(/{name}/g, req.name||'المواطن')
+    .replace(/{ref}/g,  req.ref||'')
+    .replace(/{dept}/g, req.deptName||req.dept||'')
+    .replace(/{org}/g,  cfg.sysName||'مديرية بلدية الكرمة');
+}
+
+// ── إرسال SMS عند تغيير الحالة ──
+async function triggerSmsByStatus(req, status){
+  const c = getSmsCfg();
+  if(!c.enabled) return;
+  if(status==='approved' && !c.onApprove) return;
+  if(status==='rejected' && !c.onReject)  return;
+  if(!req.phone) return;
+  const template = status==='approved' ? (c.msgApproved||'') : (c.msgRejected||'');
+  if(!template) return;
+  const text = buildSmsText(template, req);
+  const result = await sendSms(req.phone, text, req.ref, req.name);
+  if(result.ok){
+    toast('📲 تم إرسال SMS للمواطن '+req.name,'s');
+    renderSmsLog();
+  } else {
+    toast('⚠️ تعذّر إرسال SMS: '+result.msg,'e');
+    renderSmsLog();
+  }
+}
+
+// ── رسالة تجريبية ──
+function openTestSmsModal(){
+  document.getElementById('testSmsResult').innerHTML='';
+  // auto-fill رقم الاختبار من إعدادات Vonage إن وُجد
+  const c = getSmsCfg();
+  const phoneField = document.getElementById('test-sms-phone');
+  if(phoneField && !phoneField.value && c.vonage?.testphone){
+    phoneField.value = c.vonage.testphone;
+  }
+  document.getElementById('testSmsOv').classList.add('on');
+}
+async function sendTestSms(){
+  const phone = document.getElementById('test-sms-phone').value.trim();
+  const text  = document.getElementById('test-sms-text').value.trim();
+  if(!phone||!text){ document.getElementById('testSmsResult').innerHTML=`<div class="sms-status sms-err">❌ أدخل رقم الهاتف والرسالة</div>`; return; }
+  const btn = document.getElementById('sendTestBtn');
+  btn.disabled=true; btn.textContent='⏳ جاري الإرسال...';
+  const result = await sendSms(phone, text, 'TEST', 'اختبار');
+  btn.disabled=false; btn.textContent='📤 إرسال الآن';
+  const res = document.getElementById('testSmsResult');
+  if(result.ok){
+    res.innerHTML=`<div class="sms-status sms-ok">✅ تم الإرسال بنجاح! ${result.msg}</div>`;
+    renderSmsLog();
+  } else {
+    res.innerHTML=`<div class="sms-status sms-err">❌ فشل الإرسال: ${result.msg}</div>`;
+  }
+}
+
+// ── سجل الرسائل ──
+function renderSmsLog(){
+  const logs = getSmsLog();
+  const el = document.getElementById('smsLog');
+  if(!el) return;
+  if(!logs.length){ el.innerHTML=`<div style="text-align:center;padding:18px;color:var(--muted);font-size:12px;">لا توجد رسائل مُرسلة بعد</div>`; return; }
+  el.innerHTML = logs.map(l=>`
+    <div class="sms-log-row">
+      <div class="sms-dot" style="background:${l.ok?'var(--green)':'var(--red)'};"></div>
+      <div style="flex:1;">
+        <div style="font-weight:700;color:${l.ok?'var(--green)':'var(--red)'};">${l.ok?'✅ تم':'❌ فشل'} — ${l.to}</div>
+        ${l.ref?`<div style="color:var(--muted);">طلب: ${l.ref} ${l.name?'| '+l.name:''}</div>`:''}
+        ${!l.ok&&l.msg?`<div style="color:var(--red);font-size:10px;">${l.msg}</div>`:''}
+      </div>
+      <div style="color:var(--muted);font-size:10px;white-space:nowrap;">${l.time}</div>
+    </div>`).join('');
+}
+function clearSmsLog(){ localStorage.removeItem(SMS_LOG_KEY); renderSmsLog(); toast('🗑️ تم مسح سجل SMS','i'); }
+
+
+
+
+// ══════════════════════════════════════════════
+//  SEARCH & FILTER HELPERS
+// ══════════════════════════════════════════════
+
+function onSrchInput(){
+  const val = document.getElementById('srch').value;
+  const clearBtn = document.getElementById('srch-clear');
+  if(clearBtn) clearBtn.classList.toggle('visible', val.length > 0);
+  updateFilterState();
+  renderTbl();
+}
+
+function clearSrch(){
+  const el = document.getElementById('srch');
+  if(el){ el.value=''; el.focus(); }
+  const clearBtn = document.getElementById('srch-clear');
+  if(clearBtn) clearBtn.classList.remove('visible');
+  updateFilterState();
+  renderTbl();
+}
+
+function onArchSrchInput(){
+  const val = document.getElementById('archSrch').value;
+  const clearBtn = document.getElementById('archSrch-clear');
+  if(clearBtn) clearBtn.classList.toggle('visible', val.length > 0);
+  renderArch();
+}
+
+function clearArchSrch(){
+  const el = document.getElementById('archSrch');
+  if(el){ el.value=''; el.focus(); }
+  const clearBtn = document.getElementById('archSrch-clear');
+  if(clearBtn) clearBtn.classList.remove('visible');
+  renderArch();
+}
+
+function onFilterChange(){
+  updateFilterState();
+  renderTbl();
+}
+
+function updateFilterState(){
+  const srch   = document.getElementById('srch')?.value || '';
+  const fDept  = document.getElementById('fDept')?.value || '';
+  const fStatus= document.getElementById('fStatus')?.value || '';
+  const hasFilter = srch || fDept || fStatus;
+
+  // إضاءة الفلاتر النشطة
+  const deptSel   = document.getElementById('fDept');
+  const statusSel = document.getElementById('fStatus');
+  if(deptSel)   deptSel.classList.toggle('active-filter',   !!fDept);
+  if(statusSel) statusSel.classList.toggle('active-filter', !!fStatus);
+
+  // زر مسح كل الفلاتر
+  const clearBtn = document.getElementById('clearFiltersBtn');
+  if(clearBtn) clearBtn.style.display = hasFilter ? '' : 'none';
+}
+
+function clearAllFilters(){
+  const srch    = document.getElementById('srch');
+  const fDept   = document.getElementById('fDept');
+  const fStatus = document.getElementById('fStatus');
+  const clearBtn= document.getElementById('srch-clear');
+  if(srch)    srch.value='';
+  if(fDept)   fDept.selectedIndex=0;
+  if(fStatus) fStatus.selectedIndex=0;
+  if(clearBtn) clearBtn.classList.remove('visible');
+  updateFilterState();
+  renderTbl();
+}
+
+
+
+let _cloneSourceRef = null;
+
+function genNewRef(){
+  const y = new Date().getFullYear();
+  const n = Math.floor(1000 + Math.random() * 9000);
+  return `GOV-${y}-${n}`;
+}
+
+function genUniqueRef(){
+  const db = getDB();
+  const refs = new Set(db.map(r=>r.ref));
+  let ref; let tries=0;
+  do { ref = genNewRef(); tries++; } while(refs.has(ref) && tries<20);
+  return ref;
+}
+
+function regenerateCloneRef(){
+  document.getElementById('clone-new-ref').textContent = genUniqueRef();
+  updateCloneSummary();
+}
+
+function openClone(ref){
+  const db=getDB(); const r=db.find(x=>x.ref===ref);
+  if(!r){ toast('⚠️ لم يُعثر على المعاملة','e'); return; }
+  _cloneSourceRef = ref;
+
+  // بيانات الأصل
+  document.getElementById('clone-orig-ref').textContent  = r.ref;
+  document.getElementById('clone-orig-dept').textContent = r.deptName||r.dept||'—';
+  document.getElementById('clone-orig-name').textContent = r.name||'—';
+  document.getElementById('clone-new-ref').textContent   = genUniqueRef();
+
+  // تعبئة حقول التعديل
+  document.getElementById('clone-name').value    = r.name||'';
+  document.getElementById('clone-phone').value   = r.phone||'';
+  document.getElementById('clone-email').value   = r.email||'';
+  document.getElementById('clone-type').value    = r.type||'';
+  document.getElementById('clone-details').value = r.details||'';
+
+  const deptSel = document.getElementById('clone-dept');
+  for(let i=0;i<deptSel.options.length;i++){
+    if(deptSel.options[i].value===r.dept){ deptSel.selectedIndex=i; break; }
+  }
+
+  document.getElementById('clone-copy-images').checked  = (r.images||[]).length>0;
+  document.getElementById('clone-reset-status').checked = true;
+  document.getElementById('clone-clear-note').checked   = true;
+  document.getElementById('clone-add-link').checked     = true;
+
+  updateCloneSummary();
+
+  ['clone-name','clone-phone','clone-email','clone-type','clone-details',
+   'clone-dept','clone-copy-images','clone-reset-status','clone-clear-note','clone-add-link'
+  ].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('change', updateCloneSummary);
+    if(el.tagName!=='SELECT'&&el.type!=='checkbox') el.addEventListener('input', updateCloneSummary);
+  });
+
+  document.getElementById('cloneOv').classList.add('on');
+}
+
+function closeClone(){
+  document.getElementById('cloneOv').classList.remove('on');
+  _cloneSourceRef=null;
+}
+
+function updateCloneSummary(){
+  const db=getDB(); const orig=db.find(x=>x.ref===_cloneSourceRef);
+  if(!orig) return;
+  const newRef    = document.getElementById('clone-new-ref').textContent;
+  const copyImgs  = document.getElementById('clone-copy-images').checked;
+  const resetSt   = document.getElementById('clone-reset-status').checked;
+  const clearNote = document.getElementById('clone-clear-note').checked;
+  const addLink   = document.getElementById('clone-add-link').checked;
+  const imgCount  = (orig.images||[]).length;
+  const deptSel   = document.getElementById('clone-dept');
+  const deptName  = deptSel.options[deptSel.selectedIndex]?.dataset?.name || deptSel.value;
+  const newName   = document.getElementById('clone-name').value.trim()||orig.name;
+  const lines = [
+    `📋 سيُنشأ طلب جديد برقم <strong style="color:var(--shine);">${newRef}</strong>`,
+    `👤 مقدم الطلب: <strong>${newName}</strong> &nbsp;|&nbsp; 🏢 القسم: <strong>${deptName}</strong>`,
+    resetSt ? '🔄 الحالة: <strong style="color:#fbbf24;">قيد المراجعة</strong> (جديد)' : `🔄 الحالة: <strong>مُنسوخة (${orig.statusLabel||orig.status})</strong>`,
+    copyImgs&&imgCount>0 ? `📷 سيتم نسخ <strong>${imgCount} صورة</strong>` : (imgCount>0?'📷 لن تُنسخ الصور':''),
+    addLink  ? `🔗 التفاصيل ستتضمن إشارة إلى الأصل <strong>${orig.ref}</strong>` : '',
+    !clearNote&&orig.note ? `🗒️ الملاحظة ستُنقل للنسخة` : '',
+  ].filter(Boolean);
+  document.getElementById('clone-summary').innerHTML = lines.join('<br>');
+}
+
+function doClone(){
+  if(!_cloneSourceRef){ toast('⚠️ لا توجد معاملة مصدر','e'); return; }
+  const db=getDB(); const orig=db.find(x=>x.ref===_cloneSourceRef);
+  if(!orig){ toast('⚠️ لم يُعثر على المعاملة','e'); return; }
+
+  const newName  = document.getElementById('clone-name').value.trim();
+  const newPhone = document.getElementById('clone-phone').value.trim();
+  if(!newName||!newPhone){ toast('⚠️ الاسم ورقم الهاتف مطلوبان','e'); return; }
+
+  const newRef    = document.getElementById('clone-new-ref').textContent.trim();
+  const copyImgs  = document.getElementById('clone-copy-images').checked;
+  const resetSt   = document.getElementById('clone-reset-status').checked;
+  const clearNote = document.getElementById('clone-clear-note').checked;
+  const addLink   = document.getElementById('clone-add-link').checked;
+  const deptSel   = document.getElementById('clone-dept');
+  const deptId    = deptSel.value;
+  const deptName  = deptSel.options[deptSel.selectedIndex]?.dataset?.name||deptId;
+
+  if(db.find(x=>x.ref===newRef)){ toast('⚠️ رقم الطلب موجود، اضغط "توليد رقم جديد"','e'); return; }
+
+  const now=new Date();
+  let details = document.getElementById('clone-details').value.trim()||orig.details||'';
+  if(addLink) details = (details?details+'\n\n':'')+`[مستنسخ من المعاملة: ${orig.ref} — بتاريخ ${now.toLocaleDateString('ar-IQ')}]`;
+
+  const cloned = {
+    ...orig,
+    ref:         newRef,
+    name:        newName,
+    phone:       newPhone,
+    email:       document.getElementById('clone-email').value.trim()||orig.email||'',
+    type:        document.getElementById('clone-type').value.trim()||orig.type||'',
+    details,
+    dept:        deptId,
+    deptName,
+    date:        now.toLocaleDateString('ar-IQ'),
+    timestamp:   now.toISOString(),
+    status:      resetSt?'pending':orig.status,
+    statusLabel: resetSt?'قيد المراجعة':orig.statusLabel,
+    note:        clearNote?'':orig.note||'',
+    reviewedBy:  resetSt?'':orig.reviewedBy||'',
+    reviewDate:  resetSt?'':orig.reviewDate||'',
+    images:      copyImgs?[...(orig.images||[])]:[], 
+    imageCount:  copyImgs?(orig.images||[]).length:0,
+    clonedFrom:  orig.ref,
+    archived:    false,
+  };
+
+  db.push(cloned);
+  saveDB(db);
+  addLog('clone', `📋 استنساخ ${orig.ref} ← ${newRef} بواسطة ${CU.name}`, '#14b8a6');
+  closeClone();
+  loadDash();
+  toast(`✅ تم الاستنساخ — الرقم الجديد: ${newRef}`, 's');
+  setTimeout(()=> openDet(newRef), 400);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ closeDet(); closeUserModal(); closeClone(); closePrintModal(); document.getElementById('testSmsOv').classList.remove('on'); }
+});
+</script>
+</body>
+</html>
