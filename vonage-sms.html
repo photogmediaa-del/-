@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إرسال SMS — Vonage</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Cairo',sans-serif;
+    background:linear-gradient(135deg,#0a1628 0%,#0d2144 50%,#0a1628 100%);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .card{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(200,168,75,.2);
+    border-radius:20px;padding:36px;width:100%;max-width:500px;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+  }
+  .logo{text-align:center;margin-bottom:28px;}
+  .logo .icon{font-size:48px;margin-bottom:8px;}
+  .logo h1{font-size:22px;font-weight:900;color:#e8d5a3;}
+  .logo p{font-size:12px;color:rgba(255,255,255,.4);margin-top:4px;}
+
+  label{
+    display:block;font-size:12px;font-weight:700;
+    color:rgba(255,255,255,.55);margin-bottom:6px;margin-top:18px;
+  }
+  input, textarea{
+    width:100%;padding:11px 14px;border-radius:10px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    color:white;font-family:'Cairo',sans-serif;font-size:13px;
+    outline:none;transition:.25s;direction:ltr;text-align:left;
+  }
+  input:focus, textarea:focus{border-color:rgba(200,168,75,.6);}
+  textarea{min-height:100px;resize:vertical;direction:rtl;text-align:right;}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .btn{
+    width:100%;margin-top:24px;padding:14px;border-radius:12px;border:none;
+    background:linear-gradient(135deg,#c8a84b,#e8d5a3);
+    color:#0a1628;font-family:'Cairo',sans-serif;font-size:14px;font-weight:900;
+    cursor:pointer;transition:.25s;letter-spacing:.5px;
+  }
+  .btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+  .result{
+    margin-top:18px;padding:14px 16px;border-radius:12px;
+    font-size:13px;font-weight:700;display:none;line-height:1.7;
+  }
+  .result.success{
+    background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac;
+  }
+  .result.error{
+    background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;
+  }
+
+  .spinner{
+    display:inline-block;width:16px;height:16px;
+    border:2px solid rgba(10,22,40,.3);border-top-color:#0a1628;
+    border-radius:50%;animation:spin .7s linear infinite;
+    vertical-align:middle;margin-left:8px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .note{
+    margin-top:20px;padding:12px 14px;border-radius:10px;
+    background:rgba(255,193,7,.07);border:1px solid rgba(255,193,7,.15);
+    font-size:11px;color:rgba(255,255,255,.45);line-height:1.8;
+  }
+  .note strong{color:rgba(255,193,7,.7);}
+
+  .log-title{
+    margin-top:28px;font-size:11px;font-weight:800;
+    color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;
+    border-top:1px solid rgba(255,255,255,.06);padding-top:16px;
+  }
+  .log-list{margin-top:10px;max-height:160px;overflow-y:auto;}
+  .log-item{
+    padding:8px 12px;border-radius:8px;font-size:11px;
+    margin-bottom:6px;display:flex;align-items:flex-start;gap:8px;
+    background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  }
+  .log-item .li-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+  .log-item .li-info{flex:1;}
+  .log-item .li-to{color:rgba(255,255,255,.7);font-weight:700;}
+  .log-item .li-time{color:rgba(255,255,255,.3);font-size:10px;}
+  .log-item .li-msg{color:rgba(255,255,255,.45);margin-top:1px;}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="logo">
+    <div class="icon">📱</div>
+    <h1>إرسال رسالة SMS</h1>
+    <p>Vonage SMS API</p>
+  </div>
+
+  <!-- بيانات API -->
+  <div class="row2">
+    <div>
+      <label>🔑 API Key</label>
+      <input type="text" id="apiKey" placeholder="xxxxxxxx" />
+    </div>
+    <div>
+      <label>🔒 API Secret</label>
+      <input type="password" id="apiSecret" placeholder="••••••••••••••••" />
+    </div>
+  </div>
+
+  <div class="row2">
+    <div>
+      <label>📤 اسم المرسل (From)</label>
+      <input type="text" id="fromName" placeholder="Vonage APIs" value="Vonage APIs" />
+    </div>
+    <div>
+      <label>📞 رقم المستلم (To)</label>
+      <input type="text" id="toPhone" placeholder="9647833331112" />
+    </div>
+  </div>
+
+  <label>✉️ نص الرسالة</label>
+  <textarea id="msgText" placeholder="اكتب نص الرسالة هنا...">A text message sent using the Vonage SMS API</textarea>
+
+  <button class="btn" id="sendBtn" onclick="sendSms()">
+    📤 إرسال الرسالة
+  </button>
+
+  <div class="result" id="result"></div>
+
+  <div class="note">
+    <strong>⚠️ ملاحظة:</strong> بسبب قيود CORS في المتصفح، قد لا يعمل الإرسال المباشر.
+    الحل: ارفع الصفحة على سيرفر أو استخدم
+    <strong>Netlify Functions / Vercel API</strong> كـ proxy.
+  </div>
+
+  <!-- سجل الإرسال -->
+  <div class="log-title">📋 سجل الإرسال</div>
+  <div class="log-list" id="logList">
+    <div style="font-size:11px;color:rgba(255,255,255,.2);text-align:center;padding:12px;">لا توجد رسائل بعد</div>
+  </div>
+
+</div>
+
+<script>
+// ── Vonage SMS — JavaScript ──────────────────────────────────
+// مكافئ كود Java:
+//   TextMessage message = new TextMessage("Vonage APIs", to, text);
+//   SmsSubmissionResponse response = client.getSmsClient().submitMessage(message);
+//   if (response.getMessages().get(0).getStatus() == MessageStatus.OK)
+//       System.out.println("Message sent successfully.");
+//   else
+//       System.out.println("Message failed with error: " + getErrorText());
+// ─────────────────────────────────────────────────────────────
+
+const VONAGE_API_URL = "https://rest.nexmo.com/sms/json";
+let sendLog = [];
+
+async function sendSms() {
+  const apiKey    = document.getElementById("apiKey").value.trim();
+  const apiSecret = document.getElementById("apiSecret").value.trim();
+  const from      = document.getElementById("fromName").value.trim() || "Vonage APIs";
+  const to        = document.getElementById("toPhone").value.trim();
+  const text      = document.getElementById("msgText").value.trim();
+
+  // التحقق من البيانات
+  if (!apiKey || !apiSecret) return showResult("error", "❌ أدخل API Key و API Secret");
+  if (!to)   return showResult("error", "❌ أدخل رقم المستلم");
+  if (!text) return showResult("error", "❌ أدخل نص الرسالة");
+
+  // تنظيف رقم الهاتف
+  let cleanTo = to.replace(/\s/g, "").replace(/^00/, "+");
+  if (!cleanTo.startsWith("+") && !cleanTo.startsWith("9647"))
+    cleanTo = "964" + cleanTo.replace(/^0/, "");
+
+  // تفعيل حالة الإرسال
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  btn.innerHTML = `جارٍ الإرسال... <span class="spinner"></span>`;
+  showResult("", "");
+
+  try {
+    // Java: client.getSmsClient().submitMessage(message)
+    // → POST https://rest.nexmo.com/sms/json
+    const response = await fetch(VONAGE_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key:    apiKey,
+        api_secret: apiSecret,
+        from:       from,      // "Vonage APIs"
+        to:         cleanTo,   // "9647833331112"
+        text:       text
+      })
+    });
+
+    const data = await response.json();
+
+    // Java: response.getMessages().get(0)
+    const firstMessage = data?.messages?.[0];
+
+    if (!firstMessage) {
+      throw new Error("استجابة غير متوقعة من Vonage");
+    }
+
+    // Java: if (getStatus() == MessageStatus.OK)
+    if (firstMessage.status === "0") {
+
+      // Java: System.out.println("Message sent successfully.");
+      showResult("success",
+        `✅ Message sent successfully.<br>
+         📨 Message ID: <strong>${firstMessage["message-id"] || "—"}</strong><br>
+         📞 To: <strong>${firstMessage.to || cleanTo}</strong>`
+      );
+      addLog(true, cleanTo, "Message sent successfully.");
+
+    } else {
+
+      // Java: System.out.println("Message failed with error: " + getErrorText());
+      const errorText = firstMessage["error-text"] || "Error code " + firstMessage.status;
+      showResult("error", `❌ Message failed with error: <strong>${errorText}</strong>`);
+      addLog(false, cleanTo, "Message failed with error: " + errorText);
+    }
+
+  } catch (err) {
+    const msg = err.message?.includes("fetch") || err.message?.includes("CORS")
+      ? "خطأ CORS: ارفع الصفحة على سيرفر لتعمل بشكل صحيح"
+      : err.message;
+    showResult("error", "❌ خطأ في الاتصال: " + msg);
+    addLog(false, cleanTo, msg);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = "📤 إرسال الرسالة";
+}
+
+function showResult(type, html) {
+  const el = document.getElementById("result");
+  if (!type) { el.style.display = "none"; return; }
+  el.className = "result " + type;
+  el.innerHTML = html;
+  el.style.display = "block";
+}
+
+function addLog(ok, to, msg) {
+  sendLog.unshift({ ok, to, msg, time: new Date().toLocaleTimeString("ar-IQ") });
+  const list = document.getElementById("logList");
+  list.innerHTML = sendLog.map(l => `
+    <div class="log-item">
+      <div class="li-icon">${l.ok ? "✅" : "❌"}</div>
+      <div class="li-info">
+        <div class="li-to">${l.to}</div>
+        <div class="li-msg">${l.msg}</div>
+        <div class="li-time">${l.time}</div>
+      </div>
+    </div>`).join("");
+}
+
+// إرسال بضغط Enter في حقل الرقم
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") sendSms();
+});
+</script>
+
+</body>
+</html>
